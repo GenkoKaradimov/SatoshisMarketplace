@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35122.118
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SatoshisMarketplace.Web", "SatoshisMarketplace.Web.csproj", "{878C6322-99DC-4387-9330-3103C77240AD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D29A6E26-6124-4BA3-BA29-5B6F5035CDD3} = {D29A6E26-6124-4BA3-BA29-5B6F5035CDD3}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SatoshisMarketplace.Services", "..\SatoshisMarketplace.Services\SatoshisMarketplace.Services.csproj", "{D29A6E26-6124-4BA3-BA29-5B6F5035CDD3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{39D5E040-7DE4-460C-B972-9CA95E41212F} = {39D5E040-7DE4-460C-B972-9CA95E41212F}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SatoshisMarketplace.Entities", "..\SatoshisMarketplace.Entities\SatoshisMarketplace.Entities.csproj", "{39D5E040-7DE4-460C-B972-9CA95E41212F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{878C6322-99DC-4387-9330-3103C77240AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{878C6322-99DC-4387-9330-3103C77240AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{878C6322-99DC-4387-9330-3103C77240AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{878C6322-99DC-4387-9330-3103C77240AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D29A6E26-6124-4BA3-BA29-5B6F5035CDD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D29A6E26-6124-4BA3-BA29-5B6F5035CDD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D29A6E26-6124-4BA3-BA29-5B6F5035CDD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D29A6E26-6124-4BA3-BA29-5B6F5035CDD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39D5E040-7DE4-460C-B972-9CA95E41212F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39D5E040-7DE4-460C-B972-9CA95E41212F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39D5E040-7DE4-460C-B972-9CA95E41212F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39D5E040-7DE4-460C-B972-9CA95E41212F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F98AB4D9-B377-48C2-B5F1-2689EE4AFAEE}
+	EndGlobalSection
+EndGlobal
