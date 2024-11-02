@@ -27,6 +27,7 @@ Solution contains 3 projects:
 3. **Entities** – Defines the data models and contains migrations for database schema creation and management.
 
 ### Database
+The database is a Microsoft SQL Server database, created using the 'Code First' approach with Entity Framework Core.
 TODO: representation of database structure
 
 ### Services

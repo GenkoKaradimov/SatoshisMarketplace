@@ -5,6 +5,7 @@ VisualStudioVersion = 17.10.35122.118
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SatoshisMarketplace.Web", "SatoshisMarketplace.Web.csproj", "{878C6322-99DC-4387-9330-3103C77240AD}"
 	ProjectSection(ProjectDependencies) = postProject
+		{39D5E040-7DE4-460C-B972-9CA95E41212F} = {39D5E040-7DE4-460C-B972-9CA95E41212F}
 		{D29A6E26-6124-4BA3-BA29-5B6F5035CDD3} = {D29A6E26-6124-4BA3-BA29-5B6F5035CDD3}
 	EndProjectSection
 EndProject

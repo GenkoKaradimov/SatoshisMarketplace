@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace SatoshisMarketplace.Web
 {
     public class Program
@@ -8,6 +10,10 @@ namespace SatoshisMarketplace.Web
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            // Add Database
+            builder.Services.AddDbContext<SatoshisMarketplace.Entities.ServerDbContext>(options => options.UseSqlServer(
+                builder.Configuration.GetConnectionString("DefaultConnection")));
 
             var app = builder.Build();
 
