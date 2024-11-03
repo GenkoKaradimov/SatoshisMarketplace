@@ -4,7 +4,7 @@
 ## Features of 1.0.0
 The project's core functionalities are outlined below.
  1. User registration, login and logout
- 2. (TODO) User account settings
+ 2. User account settings
  3. (TODO) User can set profile picture
  4. (TODO) Activity logging (e.g., logins, password changes, profile updates)
  5. (TODO) User can deposit and withdraw satoshis to/from the marketplace balance

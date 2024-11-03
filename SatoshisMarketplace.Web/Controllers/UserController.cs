@@ -146,9 +146,81 @@ namespace SatoshisMarketplace.Web.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        public ActionResult UserSetting()
+        public async Task<IActionResult> UserSettings()
         {
+            // is logged in
+            string? username = HttpContext.Session.GetString("Username");
+            if (username == null) return RedirectToAction("Login", "User");
+
+            // get user data
+            var user = new Services.Models.UserService.UserModel(){ };
+            try
+            {
+                user = await _userService.GetUserAsync(username);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("Login", "User");
+            }
+
+            // return model
+            var model = new Models.User.UserSettingsViewModel()
+            {
+                Username = user.Username
+            };
+
+            return View(model);
+        }
+        public ActionResult ChangePassword()
+        {
+            string? username = HttpContext.Session.GetString("Username");
+            if (username == null) return RedirectToAction("Login", "User");
+
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            // is logged in
+            string? username = HttpContext.Session.GetString("Username");
+            if (username == null) return RedirectToAction("Login", "User");
+
+            // Validate input model
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                string errorMessage = String.Join(" ", errors);
+
+                TempData["ErrorMessage"] = errorMessage;
+
+                return View();
+            }
+
+            // change password
+            try
+            {
+                string ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault() ??
+                    HttpContext.Connection.RemoteIpAddress?.ToString() ?? "noIP";
+
+                var data = new Services.Models.UserService.UserChangePasswordModel()
+                {
+                    Username = username,
+                    OldPassword = model.OldPassword,
+                    NewPassword = model.NewPassword,
+                    IP = ipAddress
+                };
+
+                await _userService.ChangeUserPasswordAsync(data);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return View();
+            }
+
+            return RedirectToAction("UserSettings", "User");
         }
     }
 }

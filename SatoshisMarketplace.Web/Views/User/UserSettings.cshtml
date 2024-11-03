@@ -1,0 +1,10 @@
+﻿@model SatoshisMarketplace.Web.Models.User.UserSettingsViewModel
+@{
+    ViewData["Title"] = "User Settings Page";
+}
+<h2>User Settings</h2>
+<hr />
+<div>Username: @Model.Username</div>
+<hr />
+<a asp-controller="User" asp-action="ChangePassword" class="btn btn-outline-primary">Change Password</a>
+<hr />

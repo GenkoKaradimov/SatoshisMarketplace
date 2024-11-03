@@ -14,10 +14,12 @@ namespace SatoshisMarketplace.Services.Implementations
     public class UserService : IUserService
     {
         private readonly ServerDbContext _context;
+
         public UserService(ServerDbContext context)
         {
             _context = context;
         }
+
         public async Task<Models.UserService.UserModel> GetUserAsync(string username)
         {
             // Fetch the user asynchronously
@@ -38,6 +40,7 @@ namespace SatoshisMarketplace.Services.Implementations
 
             return model;
         }
+
         public async Task<Models.UserService.UserModel> RegisterUserAsync(Models.UserService.UserRegistrationModel model)
         {
             // check is username free
@@ -123,16 +126,38 @@ namespace SatoshisMarketplace.Services.Implementations
             return true;
         }
 
-        public Task<bool> ChangeUserPasswordAsync(Models.UserService.UserChangePasswordModel model)
+        public async Task<bool> ChangeUserPasswordAsync(Models.UserService.UserChangePasswordModel model)
         {
-            // check is username used
+            // find user by username
+            var entity = await _context.Users.FirstOrDefaultAsync(user => user.Username == model.Username);
+            if (entity == null)
+            {
+                throw new ArgumentException("User is not found!");
+            }
 
-            // register new user
+            // check password is correct
+            if (!VerifyPassword(model.OldPassword, entity.PasswordHash))
+            {
+                throw new UnauthorizedAccessException("Invalid password!");
+            }
+
+            // changing password
+            entity.PasswordHash = GetHash(model.NewPassword);
+            await _context.SaveChangesAsync();
 
             // add log that action
+            var log = new Entities.UserLog()
+            {
+                Timestamp = DateTime.UtcNow,
+                IP = model.IP,
+                Username = model.Username,
+                Type = UserLogType.PasswordChanged
 
-            //return result
-            return Task.FromResult(true);
+            };
+            await _context.UserLogs.AddAsync(log);
+            await _context.SaveChangesAsync();
+
+            return true;
         }
 
         private bool VerifyPassword(string password, byte[] passwordHash)
