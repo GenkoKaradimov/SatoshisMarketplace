@@ -1,7 +1,11 @@
-﻿using SatoshisMarketplace.Services.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using SatoshisMarketplace.Entities;
+using SatoshisMarketplace.Services.Interfaces;
+using SatoshisMarketplace.Services.Models.UserService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,53 +13,114 @@ namespace SatoshisMarketplace.Services.Implementations
 {
     public class UserService : IUserService
     {
-        public Task<Models.UserService.UserModel> GetUser(string username)
+        private readonly ServerDbContext _context;
+        public UserService(ServerDbContext context)
         {
-            // check is username used
-
-            //return result
-            return null;
+            _context = context;
         }
-        public Task<Models.UserService.UserModel> RegisterUserAsync(Models.UserService.UserRegistrationModel model)
+        public async Task<Models.UserService.UserModel> GetUserAsync(string username)
         {
-            // check is username used
+            // Fetch the user asynchronously
+            var entity = await _context.Users.FirstOrDefaultAsync(user => user.Username == username);
+
+            // Throw exception if user not found
+            if (entity == null)
+            {
+                throw new ArgumentException("User not found!");
+            }
+
+            // Map entity to UserModel
+            var model = new Models.UserService.UserModel
+            {
+                Username = entity.Username,
+                PasswordHash = entity.PasswordHash
+            };
+
+            return model;
+        }
+        public async Task<Models.UserService.UserModel> RegisterUserAsync(Models.UserService.UserRegistrationModel model)
+        {
+            // check is username free
+            var entity = await _context.Users.FirstOrDefaultAsync(user => user.Username == model.Username);
+            if (entity != null)
+            {
+                throw new ArgumentException("Username is taken!");
+            }
 
             // register new user
+            var newUser = new Entities.User()
+            {
+                Username = model.Username,
+                PasswordHash = GetHash(model.Password)
+            };
+            await _context.Users.AddAsync(newUser);
 
             // add log that action
+            var log = new Entities.UserLog()
+            {
+                Timestamp = DateTime.UtcNow,
+                IP = model.IP,
+                Username = model.Username,
+                Type = UserLogType.AccountCreated
+            };
+            await _context.UserLogs.AddAsync(log);
+            await _context.SaveChangesAsync();
 
             //return result
-            var user = new Models.UserService.UserModel
+            var user = new UserModel()
             {
-                Username = model.Username
+                Username = newUser.Username,
+                PasswordHash = newUser.PasswordHash
             };
-            return Task.FromResult(user);
+            return user;
         }
 
-        public Task<Models.UserService.UserModel> LoginAsync(Models.UserService.UserLoginModel model)
+        public async Task<Models.UserService.UserModel> LoginAsync(Models.UserService.UserLoginModel model)
         {
             // search for account by username
+            var user = await GetUserAsync(model.Username);
 
             // check password is correct
+            if (!VerifyPassword(model.Password, user.PasswordHash))
+            {
+                throw new UnauthorizedAccessException("Invalid password!");
+            }
 
             // add log that action
+            var log = new Entities.UserLog()
+            {
+                Timestamp = DateTime.UtcNow,
+                IP = model.IP,
+                Username = model.Username,
+                Type = UserLogType.Login
+
+            };
+            await _context.UserLogs.AddAsync(log);
+            await _context.SaveChangesAsync();
 
             //return result
-            var user = new Models.UserService.UserModel
-            {
-                Username = model.Username
-            };
-            return Task.FromResult(user);
+            return user;
         }
 
-        public Task<bool> LogoutAsync(Models.UserService.UserLogoutModel model)
+        public async Task<bool> LogoutAsync(Models.UserService.UserLogoutModel model)
         {
             // search for account by username
+            var user = await GetUserAsync(model.Username);
 
             // add log that action
+            var log = new Entities.UserLog()
+            {
+                Timestamp = DateTime.UtcNow,
+                IP = model.IP,
+                Username = model.Username,
+                Type = UserLogType.Logout
+
+            };
+            await _context.UserLogs.AddAsync(log);
+            await _context.SaveChangesAsync();
 
             //return result
-            return Task.FromResult(true);
+            return true;
         }
 
         public Task<bool> ChangeUserPasswordAsync(Models.UserService.UserChangePasswordModel model)
@@ -68,6 +133,25 @@ namespace SatoshisMarketplace.Services.Implementations
 
             //return result
             return Task.FromResult(true);
+        }
+
+        private bool VerifyPassword(string password, byte[] passwordHash)
+        {
+            byte[] hash = GetHash(password);
+
+            return hash.SequenceEqual(passwordHash);
+        }
+        private byte[] GetHash(string password)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                byte[] passwordBytes = System.Text.Encoding.UTF8.GetBytes(password);
+
+                // Generating Hash
+                byte[] hashBytes = sha256.ComputeHash(passwordBytes);
+
+                return hashBytes;
+            }
         }
     }
 }

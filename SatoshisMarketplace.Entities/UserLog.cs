@@ -17,6 +17,8 @@ namespace SatoshisMarketplace.Entities
         [StringLength(39)] 
         public string IP { get; set; }
 
+        public UserLogType Type { get; set; }
+
         #region Navigational Properties
 
         [Key, Column(Order = 0)]

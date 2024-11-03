@@ -36,7 +36,7 @@ namespace SatoshisMarketplace.Web.Controllers
                 return View();
             }
 
-            // make registration
+            // search user
             Services.Models.UserService.UserModel user = null;
 
             try
@@ -44,18 +44,19 @@ namespace SatoshisMarketplace.Web.Controllers
                 string ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault() ??
                     HttpContext.Connection.RemoteIpAddress?.ToString() ?? "noIP";
 
-                var data = new Services.Models.UserService.UserRegistrationModel()
+                var data = new Services.Models.UserService.UserLoginModel()
                 {
                     Username = model.Username,
                     Password = model.Password,
                     IP = ipAddress
                 };
 
-                user = await _userService.RegisterUserAsync(data);
+                user = await _userService.LoginAsync(data);
             }
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = ex.Message;
+                return View();
             }
 
             // save username to session
@@ -136,6 +137,7 @@ namespace SatoshisMarketplace.Web.Controllers
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = ex.Message;
+                return View();
             }
             
             // save username to session

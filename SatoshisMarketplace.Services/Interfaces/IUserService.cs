@@ -9,7 +9,7 @@ namespace SatoshisMarketplace.Services.Interfaces
 {
     public interface IUserService
     {
-        Task<Models.UserService.UserModel> GetUser(string username);
+        Task<Models.UserService.UserModel> GetUserAsync(string username);
 
         Task<Models.UserService.UserModel> RegisterUserAsync(Models.UserService.UserRegistrationModel model);
 

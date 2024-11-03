@@ -1,9 +1,9 @@
 # Satoshi's Marketplace
 "Satoshi's Marketplace" is a digital marketplace where users can both buy and sell digital products for satoshis (1 Bitcoin is 100 000 000 satoshis). This project was developed as a demo platform to showcase a digital trading environment for educational purposes. Please note that it is not affiliated with any real business and is intended solely as a training tool.
 
-## Features
+## Features of 1.0.0
 The project's core functionalities are outlined below.
- 1. (TODO) User registration, login and logout
+ 1. User registration, login and logout
  2. (TODO) User account settings
  3. (TODO) User can set profile picture
  4. (TODO) Activity logging (e.g., logins, password changes, profile updates)
@@ -20,6 +20,9 @@ The project's core functionalities are outlined below.
  16. (TODO) User can send messages to other user
  17. (TODO) User can transfer satoshis to other users
  18. (TODO) View a complete history of all transactions
+
+ # To Do for 1.0.1
+ 1. Change password encryption algorithm with more secured one
 
 ## Project Structure
 Solution contains 3 projects:
