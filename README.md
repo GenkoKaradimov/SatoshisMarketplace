@@ -3,9 +3,10 @@
 
 ## Features
 The project's core functionalities are outlined below.
- 1. (TODO) User registration, login, logout and account settings
+ 1. (TODO) User registration, login and logout
+ 2. (TODO) User account settings
  3. (TODO) User can set profile picture
- 4. (TODO)  Activity logging (e.g., logins, password changes, profile updates)
+ 4. (TODO) Activity logging (e.g., logins, password changes, profile updates)
  5. (TODO) User can deposit and withdraw satoshis to/from the marketplace balance
  6. (TODO) Administrator Options (create, edit, and manage product categories and tags)
  7. (TODO) User can create and publish new products

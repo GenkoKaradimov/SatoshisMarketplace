@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using SatoshisMarketplace.Services.Implementations;
+using SatoshisMarketplace.Services.Interfaces;
 
 namespace SatoshisMarketplace.Web
 {
@@ -11,9 +13,20 @@ namespace SatoshisMarketplace.Web
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
+            // Add Session
+            builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromHours(3);
+                options.Cookie.HttpOnly = true;
+            });
+
             // Add Database
             builder.Services.AddDbContext<SatoshisMarketplace.Entities.ServerDbContext>(options => options.UseSqlServer(
                 builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            // Add Services
+            builder.Services.AddScoped<IUserService, UserService>();
 
             var app = builder.Build();
 
@@ -29,6 +42,8 @@ namespace SatoshisMarketplace.Web
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseSession();
 
             app.UseAuthorization();
 
