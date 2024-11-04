@@ -160,6 +160,69 @@ namespace SatoshisMarketplace.Services.Implementations
             return true;
         }
 
+        public async Task<List<Models.UserService.UserLog>> LogsByUserAsync(string username, int count)
+        {
+            // load logs from database
+            var logs = await _context.UserLogs
+                .Where(log => log.Username == username)
+                .OrderByDescending(log => log.Timestamp)
+                .Take(count)
+                .ToListAsync();
+
+            // create responce model
+            var model = new List<Models.UserService.UserLog>();
+
+            // fill model
+            foreach (var log in logs)
+            {
+                model.Add(new Models.UserService.UserLog()
+                {
+                    Timestamp = log.Timestamp,
+                    IP = log.IP,
+                    LogType = log.Type.ToString()
+                });
+            }
+
+            return model;
+        }
+
+        public async Task<Models.UserService.UserLogs> LogsByUserAsync(string username, int page, int logsPerPage)
+        {
+            int skipCount = (page - 1) * logsPerPage;
+
+            // load logs from database
+            var logs = await _context.UserLogs
+                .Where(log => log.Username == username)
+                .OrderByDescending(log => log.Timestamp)
+                .Skip(skipCount)
+                .Take(logsPerPage)
+                .ToListAsync();
+
+            int allLogsCount = await _context.UserLogs.Where(log => log.Username == username).CountAsync();
+            int pagesCount = (int)Math.Ceiling((double)allLogsCount / logsPerPage);
+
+            // create responce model
+            Models.UserService.UserLogs model = new Models.UserService.UserLogs()
+            {
+                Logs = new List<Models.UserService.UserLog>(),
+                AllLogsCount = allLogsCount,
+                PagesCount = pagesCount
+            };
+
+            // fill model
+            foreach (var log in logs)
+            {
+                model.Logs.Add(new Models.UserService.UserLog()
+                {
+                    Timestamp = log.Timestamp,
+                    IP = log.IP,
+                    LogType = log.Type.ToString()
+                });
+            }
+
+            return model;
+        }
+
         private bool VerifyPassword(string password, byte[] passwordHash)
         {
             byte[] hash = GetHash(password);

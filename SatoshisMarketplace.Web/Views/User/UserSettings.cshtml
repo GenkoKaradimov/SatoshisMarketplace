@@ -8,3 +8,32 @@
 <hr />
 <a asp-controller="User" asp-action="ChangePassword" class="btn btn-outline-primary">Change Password</a>
 <hr />
+<h4>User Logs (last 5 of them)</h4>
+@if (Model.Logs != null && Model.Logs.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Time</th>
+                <th scope="col">IP</th>
+                <th scope="col">Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var log in Model.Logs)
+            {
+                <tr>
+                    <td>@log.Timestamp.ToString("yyyy.MM.dd HH:mm:ss")</td>
+                    <td>@log.IP</td>
+                    <td>@log.LogType</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <p class="centered-text"><a asp-controller="User" asp-action="Logs" class="no-underline-link">View All Logs</a></p>
+}
+else
+{
+    <p class="centered-text">No logs found! Contact administrator!</p>
+}
+<hr />

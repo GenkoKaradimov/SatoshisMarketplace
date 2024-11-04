@@ -20,3 +20,7 @@ body {
 .no-underline-link {
     text-decoration: none;
 }
+
+.centered-text {
+    text-align: center;
+}

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SatoshisMarketplace.Services.Interfaces;
 using SatoshisMarketplace.Web.Models.User;
+using System.Diagnostics;
 
 namespace SatoshisMarketplace.Web.Controllers
 {
@@ -153,10 +154,12 @@ namespace SatoshisMarketplace.Web.Controllers
             if (username == null) return RedirectToAction("Login", "User");
 
             // get user data
-            var user = new Services.Models.UserService.UserModel(){ };
+            Services.Models.UserService.UserModel user = null;
+            List<Services.Models.UserService.UserLog> logs = null;
             try
             {
                 user = await _userService.GetUserAsync(username);
+                logs = await _userService.LogsByUserAsync(username, 5);
             }
             catch (Exception ex)
             {
@@ -164,14 +167,67 @@ namespace SatoshisMarketplace.Web.Controllers
                 return RedirectToAction("Login", "User");
             }
 
-            // return model
+            // prepare model
             var model = new Models.User.UserSettingsViewModel()
             {
-                Username = user.Username
+                Username = user.Username,
+                Logs = new List<UserLog>()
             };
+
+            // fill logs
+            foreach (var log in logs)
+            {
+                model.Logs.Add(new UserLog()
+                {
+                    Timestamp = log.Timestamp,
+                    IP = log.IP,
+                    LogType = log.LogType
+                });
+            }
 
             return View(model);
         }
+
+        public async Task<IActionResult> Logs(int? page)
+        {
+            // get current page
+            int currentPage = page ?? 1;
+            int logsPerPage = 6;
+
+            // Check user
+            string? username = HttpContext.Session.GetString("Username");
+            if (username == null)
+            {
+                return RedirectToAction("Login", "User");
+            }
+
+            // get logs
+            var logs = await _userService.LogsByUserAsync(username, currentPage, logsPerPage);
+
+            // create return model
+            var model = new Models.User.UserLogs()
+            {
+                Username = username,
+                AllLogsCount = logs.AllLogsCount,
+                PagesCount = logs.PagesCount,
+                CurrentPage = currentPage,
+                Logs = new List<UserLog>()
+            };
+
+            // fill logs
+            foreach(var log in logs.Logs)
+            {
+                model.Logs.Add(new UserLog()
+                {
+                    Timestamp = log.Timestamp,
+                    IP= log.IP,
+                    LogType= log.LogType
+                });
+            }
+
+            return View(model);
+        }
+
         public ActionResult ChangePassword()
         {
             string? username = HttpContext.Session.GetString("Username");

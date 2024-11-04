@@ -18,5 +18,9 @@ namespace SatoshisMarketplace.Services.Interfaces
         Task<bool> LogoutAsync(Models.UserService.UserLogoutModel model);
 
         Task<bool> ChangeUserPasswordAsync(Models.UserService.UserChangePasswordModel model);
+
+        Task<List<Models.UserService.UserLog>> LogsByUserAsync(string username, int count);
+
+        Task<Models.UserService.UserLogs> LogsByUserAsync(string username, int page, int logsPerPage);
     }
 }

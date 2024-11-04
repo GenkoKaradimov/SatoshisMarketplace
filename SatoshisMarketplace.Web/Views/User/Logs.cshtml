@@ -1,0 +1,102 @@
+﻿@using Microsoft.AspNetCore.Html
+@model SatoshisMarketplace.Web.Models.User.UserLogs
+@{
+    ViewData["Title"] = "Logs Page";
+    int pages = Model.PagesCount;
+    int curr = Model.CurrentPage;
+}
+@functions {
+    public IHtmlContent RenderNavButton(int i, int current)
+    {
+        if (i != current)
+            return new HtmlString($"<a type='button' class='btn btn-outline-primary' href='?page={i}'>{i}</a>");
+        else
+            return new HtmlString($"<a type='button' class='btn btn-primary' href='?page={i}'>{i}</a>");
+    }
+}
+<h2>Logs</h2>
+<hr />
+<div>Logs of: @Model.Username</div>
+<hr />
+@if (Model.Logs != null && Model.Logs.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Time</th>
+                <th scope="col">IP</th>
+                <th scope="col">Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var log in Model.Logs)
+            {
+                <tr>
+                    <td>@log.Timestamp.ToString("yyyy MMMM dd HH:mm:ss")</td>
+                    <td>@log.IP</td>
+                    <td>@log.LogType</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<hr />
+<div class="btn-toolbar justify-content-center" role="toolbar" aria-label="Toolbar with button groups">
+    @if (pages < 8)
+    {
+        for (int i = 1; i <= pages; i++)
+        {
+            @RenderNavButton(i, curr)
+        }
+    }
+    else
+    {
+        if (curr <= 4)
+        {
+            <div class="btn-group me-2" role="group">
+                @for (int i = 1; i <= curr + 1; i++)
+                {
+                    @RenderNavButton(i, curr)
+                }
+            </div>
+
+            <div class="btn-group me-2" role="group">
+                @RenderNavButton(pages - 1, curr)
+                @RenderNavButton(pages, curr)
+            </div>
+        }
+        else if (pages - curr <= 3)
+        {
+            <div class="btn-group me-2" role="group">
+                @RenderNavButton(1, curr)
+                @RenderNavButton(2, curr)
+            </div>
+
+            <div class="btn-group me-2" role="group">
+                @for (int i = curr - 1; i <= pages; i++)
+                {
+                    @RenderNavButton(i, curr)
+                }
+            </div>
+        }
+        else
+        {
+            <div class="btn-group me-2" role="group">
+                @RenderNavButton(1, curr)
+                @RenderNavButton(2, curr)
+            </div>
+
+            <div class="btn-group me-2" role="group">
+                @for (int i = curr - 1; i <= curr + 1; i++)
+                {
+                    @RenderNavButton(i, curr)
+                }
+            </div>
+
+            <div class="btn-group me-2" role="group">
+                @RenderNavButton(pages - 1, curr)
+                @RenderNavButton(pages, curr)
+            </div>
+        }
+    }
+</div>
