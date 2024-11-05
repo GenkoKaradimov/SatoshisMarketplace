@@ -18,6 +18,8 @@ namespace SatoshisMarketplace.Entities
         [MaxLength(64)] // 64 bytes for hash of SHA-512
         public byte[] PasswordHash { get; set; }
 
+        public bool IsAdministator { get; set; }
+
         #region Navigational Properties
 
         public ICollection<UserLog> UserLogs { get; set; } = new HashSet<UserLog>();

@@ -11,5 +11,7 @@ namespace SatoshisMarketplace.Services.Models.UserService
         public string Username { get; set; }
 
         public byte[] PasswordHash { get; set; }
+
+        public bool IsAdministrator { get; set; }
     }
 }

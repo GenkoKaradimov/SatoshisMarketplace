@@ -10,4 +10,8 @@
     <ProjectReference Include="..\SatoshisMarketplace.Entities\SatoshisMarketplace.Entities.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\AdminService\" />
+  </ItemGroup>
+
 </Project>

@@ -35,7 +35,8 @@ namespace SatoshisMarketplace.Services.Implementations
             var model = new Models.UserService.UserModel
             {
                 Username = entity.Username,
-                PasswordHash = entity.PasswordHash
+                PasswordHash = entity.PasswordHash,
+                IsAdministrator = entity.IsAdministator
             };
 
             return model;
@@ -54,7 +55,9 @@ namespace SatoshisMarketplace.Services.Implementations
             var newUser = new Entities.User()
             {
                 Username = model.Username,
-                PasswordHash = GetHash(model.Password)
+                PasswordHash = GetHash(model.Password),
+                IsAdministator = false
+                
             };
             await _context.Users.AddAsync(newUser);
 
@@ -73,7 +76,8 @@ namespace SatoshisMarketplace.Services.Implementations
             var user = new UserModel()
             {
                 Username = newUser.Username,
-                PasswordHash = newUser.PasswordHash
+                PasswordHash = newUser.PasswordHash,
+                IsAdministrator = false
             };
             return user;
         }

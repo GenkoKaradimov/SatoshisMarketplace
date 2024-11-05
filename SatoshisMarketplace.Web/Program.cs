@@ -27,6 +27,7 @@ namespace SatoshisMarketplace.Web
 
             // Add Services
             builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IAdminService, AdminService>();
 
             var app = builder.Build();
 

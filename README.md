@@ -23,6 +23,8 @@ The project's core functionalities are outlined below.
 
  # To Do for 1.0.1
  1. Change password encryption algorithm with more secured one
+ 2. Filter logs per type and timestamp period (from / to)
+ 3. Administrator to ban and restrict users
 
 ## Project Structure
 Solution contains 3 projects:
