@@ -33,5 +33,99 @@ namespace SatoshisMarketplace.Services.Implementations
 
             return entity.IsAdministator;
         }
+
+        public async Task<List<Models.AdminService.Tag>> GetTagsAsync()
+        {
+            var tags = await _context.Tags.ToListAsync();
+
+            var resp = tags.Select(tag => new Models.AdminService.Tag
+            {
+                Id = tag.Id,
+                DisplayName = tag.DisplayName,
+                Description = tag.Description
+            }).ToList();
+
+            return resp;
+        }
+
+        public async Task<Models.AdminService.Tag> GetTagByIdAsync(int id)
+        {
+            var tag = await _context.Tags.FirstOrDefaultAsync(tag => tag.Id == id);
+
+            if(tag == null)
+            {
+                throw new ArgumentException("Tag not found!");
+            }
+
+            var resp = new Models.AdminService.Tag()
+            {
+                Id = tag.Id,
+                DisplayName = tag.DisplayName,
+                Description = tag.Description
+            };
+
+            return resp;
+        }
+
+        public async Task<Models.AdminService.Tag> CreateTagAsync(Models.AdminService.Tag model)
+        {
+            var tag = new Entities.Tag()
+            {
+                DisplayName = model.DisplayName,
+                Description = model.Description
+            };
+
+            _context.Tags.Add(tag);
+            await _context.SaveChangesAsync();
+
+            return new Models.AdminService.Tag()
+            {
+                Id = tag.Id,
+                DisplayName = model.DisplayName,
+                Description = model.Description
+            };
+        }
+
+        public async Task<Models.AdminService.Tag> EditTagAsync(Models.AdminService.Tag model)
+        {
+            var tag = await _context.Tags.FirstOrDefaultAsync(tag => tag.Id == model.Id);
+
+            if (tag == null)
+            {
+                throw new ArgumentException("Tag not found!");
+            }
+
+            //if(tag.DisplayName == model.DisplayName && tag.Description == model.Description)
+            //{
+            //    throw new ArgumentException("Nothing changed in 'tag' parameter!");
+            //}
+
+            tag.DisplayName = model.DisplayName;
+            tag.Description = model.Description;
+
+            await _context.SaveChangesAsync();
+
+            return new Models.AdminService.Tag
+            {
+                Id = tag.Id,
+                DisplayName = tag.DisplayName,
+                Description = tag.Description
+            };
+        }
+
+        public async Task<bool> DeleteTagAsync(int id)
+        {
+            var tag = await _context.Tags.FirstOrDefaultAsync(tag => tag.Id == id);
+
+            if (tag == null)
+            {
+                return false;
+            }
+
+            _context.Tags.Remove(tag);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
     }
 }

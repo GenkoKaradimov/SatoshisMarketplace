@@ -13,6 +13,8 @@ namespace SatoshisMarketplace.Entities
 
         public DbSet<UserLog> UserLogs { get; set; }
 
+        public DbSet<Tag> Tags { get; set; }
+
         public ServerDbContext(DbContextOptions<ServerDbContext> options)
             : base(options)
         {
@@ -40,6 +42,14 @@ namespace SatoshisMarketplace.Entities
                     .HasPrincipalKey(user => user.Username)
                     .HasForeignKey(log => log.Username)
                     .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<Tag>(entity =>
+            {
+                entity.HasKey(tag => tag.Id);
+
+                entity.Property(tag => tag.Id)
+                    .ValueGeneratedOnAdd();
             });
         }
     }

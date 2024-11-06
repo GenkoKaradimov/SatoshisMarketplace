@@ -1,0 +1,28 @@
+﻿@model SatoshisMarketplace.Web.Models.Admin.EditTagViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Edit Tag Page";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                Edit Tag
+            </div>
+            <div class="card-body">
+                <form method="post" asp-action="EditTag" asp-controller="Admin" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="DisplayName" class="form-label">Display Name</label>
+                        <input type="text" class="form-control" id="DisplayName" name="DisplayName" value="@Model.DisplayName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Description" class="form-label">Description</label>
+                        <textarea class="form-control" id="Description" name="Description" rows="3" maxlength="500" required>@Model.Description</textarea>
+                    </div>
+                    <button type="submit" class="btn btn-outline-primary">Edit Tag</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

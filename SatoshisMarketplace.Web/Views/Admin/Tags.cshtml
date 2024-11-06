@@ -1,0 +1,40 @@
+﻿@model SatoshisMarketplace.Web.Models.Admin.TagsViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Tags Menagement Page";
+}
+<h2>Tags Menagement</h2>
+<hr />
+<a asp-controller="Admin" asp-action="CreateTag" class="btn btn-outline-primary">Create Tag</a>
+<hr />
+@if (Model.Tags != null && Model.Tags.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Display Name</th>
+                <th scope="col">Description</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var tag in Model.Tags)
+            {
+                <tr>
+                    <td>@tag.Id</td>
+                    <td>@tag.DisplayName</td>
+                    <td>@tag.Description</td>
+                    <td>
+                        <a asp-controller="Admin" asp-action="EditTag" asp-route-id="@tag.Id" class="btn btn-outline-warning">Edit Tag</a>
+                        <a asp-controller="Admin" asp-action="DeleteTag" asp-route-id="@tag.Id" class="btn btn-outline-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="centered-text">No tags found!</p>
+}
