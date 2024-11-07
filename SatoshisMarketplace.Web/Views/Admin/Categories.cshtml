@@ -1,0 +1,46 @@
+﻿@using Microsoft.AspNetCore.Html
+@model SatoshisMarketplace.Web.Models.Admin.CategoriesViewModel
+@section head {
+    <link rel="stylesheet" href="~/css/admin_categories.css" />
+}
+@section scripts {
+    <script src="~/js/admin_categories.js"></script>
+}
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Categories Menagement Page";
+}
+@functions {
+    public IHtmlContent RenderElement(SatoshisMarketplace.Web.Models.Admin.CategoryViewModel category)
+    {
+        string addBtn = $"<a href=\"/Admin/CreateCategory?parentId={category.Id}\" class=\"btn btn-outline-primary\">Add</a>";
+        string editBtn = $"<a href=\"/Admin/EditCategory/{category.Id}\" class=\"btn btn-outline-warning\">Edit</a>";
+        string delBtn = $"<a href=\"/Admin/DeleteCategory/{category.Id}\" class=\"btn btn-outline-danger\">Delete</a>";
+        string btns = addBtn + editBtn + delBtn;
+
+        if (category.SubCategories != null && category.SubCategories.Any())
+        {
+            string sub = string.Join("", category.SubCategories.Select(sc => RenderElement(sc)));
+
+            return new HtmlString($"<li class=\"list-group-item\"><span class=\"caret\">{category.Name} {btns}</span><ul class=\"nested list-group\">{sub}</ul></li>");
+        }
+        else
+        {
+            return new HtmlString($"<li class=\"list-group-item\">{category.Name} {btns}</li>");
+        }
+    }
+}
+<h2>Categories Menagement</h2>
+<hr />
+<a asp-controller="Admin" asp-action="CreateCategory" class="btn btn-outline-primary">Create Category</a>
+<hr />
+@if (Model.Categories != null && Model.Categories.Any())
+{
+    <ul id="myUL" class="list-group">
+        @foreach(var category in Model.Categories) @RenderElement(category)
+    </ul>
+}
+else
+{
+    <p class="centered-text">No categories found!</p>
+}

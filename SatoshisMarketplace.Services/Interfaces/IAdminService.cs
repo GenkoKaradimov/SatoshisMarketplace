@@ -21,5 +21,17 @@ namespace SatoshisMarketplace.Services.Interfaces
         Task<Models.AdminService.Tag> EditTagAsync(Models.AdminService.Tag model);
 
         Task<bool> DeleteTagAsync(int id);
+
+        Task<List<Models.AdminService.Category>> GetCategoryTreeAsync(int? startParentId);
+
+        Task<Dictionary<int, string>> GetCategoryDisplayListAsync();
+
+        Task<Models.AdminService.Category> GetCategoryByIdAsync(int id);
+
+        Task<Models.AdminService.Category> CreateCategoryAsync(Models.AdminService.Category model);
+
+        Task<Models.AdminService.Category> EditCategoryAsync(Models.AdminService.Category model);
+
+        Task<bool> DeleteCategoryAsync(int id);
     }
 }

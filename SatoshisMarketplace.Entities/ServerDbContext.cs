@@ -15,6 +15,8 @@ namespace SatoshisMarketplace.Entities
 
         public DbSet<Tag> Tags { get; set; }
 
+        public DbSet<Category> Categories { get; set; }
+
         public ServerDbContext(DbContextOptions<ServerDbContext> options)
             : base(options)
         {
@@ -50,6 +52,23 @@ namespace SatoshisMarketplace.Entities
 
                 entity.Property(tag => tag.Id)
                     .ValueGeneratedOnAdd();
+            });
+
+            modelBuilder.Entity<Category>(entity =>
+            {
+                entity.HasKey(cat => cat.Id);
+
+                entity.Property(cat => cat.Id)
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(cat => cat.ParentCategoryId)
+                    .IsRequired(false);
+
+                entity
+                   .HasMany(cat => cat.SubCategories)
+                   .WithOne(cat => cat.ParentCategory)
+                   .HasForeignKey(cat => cat.ParentCategoryId)
+                   .OnDelete(DeleteBehavior.Restrict);
             });
         }
     }

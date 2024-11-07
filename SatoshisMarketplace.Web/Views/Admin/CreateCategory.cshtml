@@ -1,0 +1,57 @@
+﻿@model SatoshisMarketplace.Web.Models.Admin.CreateCategoryViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Create Category Page";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                Create Category
+            </div>
+            <div class="card-body">
+                <form method="post" asp-action="CreateCategory" asp-controller="Admin" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="Name" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="Name" name="Name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Description" class="form-label">Description</label>
+                        <textarea class="form-control" id="Description" name="Description" rows="3" maxlength="500" required></textarea>
+                    </div>
+                    @if (Model.OptionalCategories != null)
+                    {
+                        <div class="mb-3">
+                            <label for="ParentCategoryId" class="form-label">Parent Category</label>
+                            <select class="form-control" id="ParentCategoryId" name="ParentCategoryId">
+                                @if (Model.ParentCategoryId == null)
+                                {
+                                    <option value="-1" selected>(Select Parent Category)</option>
+                                }
+                                else
+                                {
+                                    <option value="-1">(Select Parent Category)</option>
+                                }
+
+                                @foreach (var category in Model.OptionalCategories)
+                                {
+                                    if(Model.ParentCategoryId == category.Key)
+                                    {
+                                        <option value="@category.Key" selected>@category.Value</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@category.Key">@category.Value</option>
+                                    }
+
+                                }
+                            </select>
+                        </div>
+                    }
+                    <button type="submit" class="btn btn-outline-primary">Create Category</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
