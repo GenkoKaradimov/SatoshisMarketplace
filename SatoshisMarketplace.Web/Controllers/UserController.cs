@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SatoshisMarketplace.Services.Interfaces;
 using SatoshisMarketplace.Web.Models.User;
@@ -9,10 +10,12 @@ namespace SatoshisMarketplace.Web.Controllers
     public class UserController : Controller
     {
         private readonly IUserService _userService;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IWebHostEnvironment webHostEnvironment)
         {
             _userService = userService;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public ActionResult Login()
@@ -234,6 +237,63 @@ namespace SatoshisMarketplace.Web.Controllers
             if (username == null) return RedirectToAction("Login", "User");
 
             return View();
+        }
+
+        public async Task<IActionResult> UploadProfileImage(IFormFile profileImage)
+        {
+            string? username = HttpContext.Session.GetString("Username");
+            if (username == null) return RedirectToAction("Login", "User");
+
+            if (profileImage == null || profileImage.Length == 0)
+            {
+                return BadRequest("No image uploaded.");
+            }
+
+            string ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault() ??
+                    HttpContext.Connection.RemoteIpAddress?.ToString() ?? "noIP";
+
+            try
+            {
+                // Convert the uploaded file to a byte array
+                byte[] imageBytes;
+                using (var memoryStream = new MemoryStream())
+                {
+                    await profileImage.CopyToAsync(memoryStream);
+                    imageBytes = memoryStream.ToArray();
+                }
+
+                // add it at database
+                await _userService.UpdateUserProfilePictureAsync(new Services.Models.UserService.UpdateUserPictureModel()
+                {
+                    Username = username,
+                    Image = imageBytes,
+                    IP = ipAddress
+                });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+
+            return Ok("Image changed successfully");
+        }
+
+        public async Task<IActionResult> GetUserProfileImage(string username)
+        {
+            byte[] profilePicture = new byte[0];
+
+            try
+            {
+                // take profile picture from database
+                profilePicture = await _userService.GetUserProfilePictureAsync(username);
+            }
+            catch (Exception ex)
+            {
+                var defaultImagePath = Path.Combine(_webHostEnvironment.WebRootPath, "images", "nopicture.jpg");
+                profilePicture = await System.IO.File.ReadAllBytesAsync(defaultImagePath);
+            }
+
+            return File(profilePicture, "image/jpeg");
         }
 
         [HttpPost]

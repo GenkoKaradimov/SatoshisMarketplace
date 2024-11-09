@@ -21,10 +21,14 @@ The project's core functionalities are outlined below.
  17. (TODO) User can transfer satoshis to other users
  18. (TODO) View a complete history of all transactions
 
- # To Do for 1.0.1
+ # To Do for next versions
  1. Change password encryption algorithm with more secured one
  2. Filter logs per type and timestamp period (from / to)
  3. Administrator to ban and restrict users
+ 4. Checking is password good (registration, changing password)
+ 5. Add email to profile (password recovering)
+ 6. Admin can configure fees for deposit, withdrawal and sell
+ 7. Platform to be locked as a store - users connot sell products
 
 ## Project Structure
 Solution contains 3 projects:
@@ -34,7 +38,7 @@ Solution contains 3 projects:
 
 ### Database
 The database is a Microsoft SQL Server database, created using the 'Code First' approach with Entity Framework Core.
-TODO: representation of database structure
+TODO: scheme of database structure
 
 ### Services
 TODO: list of services and methods

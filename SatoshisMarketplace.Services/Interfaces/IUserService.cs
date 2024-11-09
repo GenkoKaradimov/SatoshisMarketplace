@@ -1,4 +1,6 @@
-﻿using SatoshisMarketplace.Services.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using SatoshisMarketplace.Services.Models;
+using SatoshisMarketplace.Services.Models.UserService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +12,10 @@ namespace SatoshisMarketplace.Services.Interfaces
     public interface IUserService
     {
         Task<Models.UserService.UserModel> GetUserAsync(string username);
+
+        Task<byte[]> GetUserProfilePictureAsync(string username);
+
+        Task UpdateUserProfilePictureAsync(UpdateUserPictureModel model);
 
         Task<Models.UserService.UserModel> RegisterUserAsync(Models.UserService.UserRegistrationModel model);
 

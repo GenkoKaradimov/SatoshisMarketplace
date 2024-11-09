@@ -42,6 +42,60 @@ namespace SatoshisMarketplace.Services.Implementations
             return model;
         }
 
+        public async Task<byte[]> GetUserProfilePictureAsync(string username)
+        {
+            // Fetch the user asynchronously
+            var entity = await _context.Users.FirstOrDefaultAsync(user => user.Username == username);
+
+            // Throw exception if user not found
+            if (entity == null)
+            {
+                throw new ArgumentException("User not found!");
+            }
+
+            // no image availiable
+            if (entity.ProfileImage == null || entity.ProfileImage.Length == 0)
+            {
+                throw new ArgumentException("User profile picture not found!");
+            }
+
+            return entity.ProfileImage;
+        }
+
+        public async Task UpdateUserProfilePictureAsync(UpdateUserPictureModel model)
+        {
+            // 'newProfilePicture' is not valid
+            if (model.Image == null || model.Image.Length == 0)
+            {
+                throw new ArgumentException("New profile picture cannot be null or empty.");
+            }
+
+            // Fetch the user asynchronously
+            var entity = await _context.Users.FirstOrDefaultAsync(user => user.Username == model.Username);
+
+            // Throw exception if user not found
+            if (entity == null)
+            {
+                throw new ArgumentException("User not found!");
+            }
+
+            // update profile picture
+            entity.ProfileImage = model.Image;
+
+            // add log that action
+            var log = new Entities.UserLog()
+            {
+                Timestamp = DateTime.UtcNow,
+                IP = model.IP,
+                Username = model.Username,
+                Type = UserLogType.ProfilePictureSet
+
+            };
+            await _context.UserLogs.AddAsync(log);
+
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<Models.UserService.UserModel> RegisterUserAsync(Models.UserService.UserRegistrationModel model)
         {
             // check is username free

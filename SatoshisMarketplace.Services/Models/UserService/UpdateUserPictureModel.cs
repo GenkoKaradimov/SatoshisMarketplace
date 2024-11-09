@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 
 namespace SatoshisMarketplace.Services.Models.UserService
 {
-    public class UserModel
+    public class UpdateUserPictureModel
     {
         public string Username { get; set; }
 
-        public byte[] PasswordHash { get; set; }
+        public string IP { get; set; }
 
-        public bool IsAdministrator { get; set; }
+        public byte[] Image { get; set; }
     }
-
 }

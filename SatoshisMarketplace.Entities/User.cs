@@ -20,6 +20,10 @@ namespace SatoshisMarketplace.Entities
 
         public bool IsAdministator { get; set; }
 
+        [MaxLength(1048576)] // (1 MB).
+        public byte[]? ProfileImage { get; set; } 
+
+
         #region Navigational Properties
 
         public ICollection<UserLog> UserLogs { get; set; } = new HashSet<UserLog>();

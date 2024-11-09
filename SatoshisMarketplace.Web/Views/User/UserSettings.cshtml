@@ -2,11 +2,22 @@
 @{
     ViewData["Title"] = "User Settings Page";
 }
+@section scripts {
+    <script src="~/js/user_settings.js"></script>
+}
 <h2>User Settings</h2>
 <hr />
-<div>Username: @Model.Username</div>
+<div class="row">
+    <img src="@Url.Action("GetUserProfileImage", "User", new { username = Model.Username })"
+         class="col img-thumbnail"
+         alt="Profile picture of @Model.Username"
+         loading="lazy"
+         style="max-width:200px">
+    <div class="col">Username: @Model.Username</div>
+</div>
 <hr />
 <a asp-controller="User" asp-action="ChangePassword" class="btn btn-outline-primary">Change Password</a>
+<button onclick="ChangeProfilePicture()" class="btn btn-outline-primary">Change Profile Picture</button>
 <hr />
 <h4>User Logs (last 5 of them)</h4>
 @if (Model.Logs != null && Model.Logs.Any())
