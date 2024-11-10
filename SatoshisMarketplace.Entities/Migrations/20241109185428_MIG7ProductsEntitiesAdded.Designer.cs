@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SatoshisMarketplace.Entities;
 
@@ -11,9 +12,10 @@ using SatoshisMarketplace.Entities;
 namespace SatoshisMarketplace.Entities.Migrations
 {
     [DbContext(typeof(ServerDbContext))]
-    partial class ServerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241109185428_MIG7ProductsEntitiesAdded")]
+    partial class MIG7ProductsEntitiesAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -63,6 +65,11 @@ namespace SatoshisMarketplace.Entities.Migrations
                         .HasMaxLength(5000)
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<byte[]>("File")
+                        .IsRequired()
+                        .HasMaxLength(1073741824)
+                        .HasColumnType("varbinary(max)");
+
                     b.Property<DateTime>("FirstPublication")
                         .HasColumnType("datetime2");
 
@@ -91,7 +98,7 @@ namespace SatoshisMarketplace.Entities.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("SatoshisMarketplace.Entities.ProductFile", b =>
+            modelBuilder.Entity("SatoshisMarketplace.Entities.ProductImage", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -106,28 +113,17 @@ namespace SatoshisMarketplace.Entities.Migrations
 
                     b.Property<byte[]>("ImageData")
                         .IsRequired()
-                        .HasMaxLength(1073741824)
+                        .HasMaxLength(10485760)
                         .HasColumnType("varbinary(max)");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("TimestampUploaded")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<int>("Type")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductFiles");
+                    b.ToTable("ProductImages");
                 });
 
             modelBuilder.Entity("SatoshisMarketplace.Entities.Tag", b =>
@@ -222,10 +218,10 @@ namespace SatoshisMarketplace.Entities.Migrations
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("SatoshisMarketplace.Entities.ProductFile", b =>
+            modelBuilder.Entity("SatoshisMarketplace.Entities.ProductImage", b =>
                 {
                     b.HasOne("SatoshisMarketplace.Entities.Product", "Product")
-                        .WithMany("ProductFiles")
+                        .WithMany("ProductImages")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -251,7 +247,7 @@ namespace SatoshisMarketplace.Entities.Migrations
 
             modelBuilder.Entity("SatoshisMarketplace.Entities.Product", b =>
                 {
-                    b.Navigation("ProductFiles");
+                    b.Navigation("ProductImages");
                 });
 
             modelBuilder.Entity("SatoshisMarketplace.Entities.User", b =>

@@ -28,6 +28,8 @@ namespace SatoshisMarketplace.Entities
 
         public ICollection<UserLog> UserLogs { get; set; } = new HashSet<UserLog>();
 
+        public ICollection<Product> Products { get; set; } = new HashSet<Product>();
+
         #endregion
     }
 }

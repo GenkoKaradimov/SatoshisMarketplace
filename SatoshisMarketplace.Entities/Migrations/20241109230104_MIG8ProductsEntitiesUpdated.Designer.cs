@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SatoshisMarketplace.Entities;
 
@@ -11,9 +12,10 @@ using SatoshisMarketplace.Entities;
 namespace SatoshisMarketplace.Entities.Migrations
 {
     [DbContext(typeof(ServerDbContext))]
-    partial class ServerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241109230104_MIG8ProductsEntitiesUpdated")]
+    partial class MIG8ProductsEntitiesUpdated
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -63,6 +65,11 @@ namespace SatoshisMarketplace.Entities.Migrations
                         .HasMaxLength(5000)
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<byte[]>("File")
+                        .IsRequired()
+                        .HasMaxLength(1073741824)
+                        .HasColumnType("varbinary(max)");
+
                     b.Property<DateTime>("FirstPublication")
                         .HasColumnType("datetime2");
 
@@ -111,14 +118,6 @@ namespace SatoshisMarketplace.Entities.Migrations
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
-
-                    b.Property<DateTime>("TimestampUploaded")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");

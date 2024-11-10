@@ -5,11 +5,11 @@
 The project's core functionalities are outlined below.
  1. User registration, login and logout
  2. User account settings
- 3. (TODO) User can set profile picture
+ 3. User can set profile picture
  4. Activity logging (e.g., logins, password changes, profile updates)
  5. (TODO) User can deposit and withdraw satoshis to/from the marketplace balance
  6. Administrator Options (create, edit, and manage categories and tags)
- 7. (TODO) User can create and publish new products
+ 7. User can create and publish new products
  8. (TODO) User can his edit existing product details
  9. (TODO) User can release new versions of existing products (add new 'product version')
  10. (TODO) Categorization products by category and tags
@@ -29,6 +29,8 @@ The project's core functionalities are outlined below.
  5. Add email to profile (password recovering)
  6. Admin can configure fees for deposit, withdrawal and sell
  7. Platform to be locked as a store - users connot sell products
+ 8. View old version of product
+ 9. Move files from database to Blob storage (will be cheaper)
 
 ## Project Structure
 Solution contains 3 projects:
