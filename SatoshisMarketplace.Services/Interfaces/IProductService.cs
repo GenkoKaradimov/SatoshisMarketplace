@@ -22,8 +22,10 @@ namespace SatoshisMarketplace.Services.Interfaces
 
         Task PublishProductAsync(int id, bool isPublished);
 
-        Task<int> AddProductFileAsync();
+        Task<int> AddProductFileAsync(Models.ProductService.AddProductFileModel model);
 
-        Task RemoveProductFileAsync();
+        Task RemoveProductFileAsync(int productFileId);
+
+        Task<Models.ProductService.ProductFIleModel> GetProductFile(int id);
     }
 }

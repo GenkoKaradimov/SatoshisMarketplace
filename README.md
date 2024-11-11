@@ -9,28 +9,16 @@ The project's core functionalities are outlined below.
  4. Activity logging (e.g., logins, password changes, profile updates)
  5. (TODO) User can deposit and withdraw satoshis to/from the marketplace balance
  6. Administrator Options (create, edit, and manage categories and tags)
- 7. User can create and publish new products
- 8. (TODO) User can his edit existing product details
- 9. (TODO) User can release new versions of existing products (add new 'product version')
- 10. (TODO) Categorization products by category and tags
- 12. (TODO) User can view products by latest releases, specific tags, or categories
- 13. (TODO) User can add products to a personal "Favorites" list
- 14. (TODO) User can purchase product
- 15. (TODO) User can leave reviews on purchased products
- 16. (TODO) User can send messages to other user
- 17. (TODO) User can transfer satoshis to other users
- 18. (TODO) View a complete history of all transactions
-
- # To Do for next versions
- 1. Change password encryption algorithm with more secured one
- 2. Filter logs per type and timestamp period (from / to)
- 3. Administrator to ban and restrict users
- 4. Checking is password good (registration, changing password)
- 5. Add email to profile (password recovering)
- 6. Admin can configure fees for deposit, withdrawal and sell
- 7. Platform to be locked as a store - users connot sell products
- 8. View old version of product
- 9. Move files from database to Blob storage (will be cheaper)
+ 7. User can create new products and mаnage products
+ 8. (TODO) Categorization products by category and tags
+ 9. (TODO) User can view products by latest releases, specific tags, or categories
+ 10. (TODO) User can add products to a personal "Favorites" list
+ 11. (TODO) User can purchase product
+ 12. (TODO) User can leave reviews on purchased products
+ 13. (TODO) User can send messages to other user
+ 14. (TODO) User can transfer satoshis to other users
+ 15. (TODO) View a complete history of all transactions
+ 16. (TODO) Dockerize application
 
 ## Project Structure
 Solution contains 3 projects:

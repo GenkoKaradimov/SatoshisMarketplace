@@ -30,8 +30,8 @@
                     <td>@prod.FirstPublication.ToString("yyyy.MM.dd HH:mm:ss")</td>
                     <td>@prod.IsListed</td>
                     <td>
-                        <a asp-controller="User" asp-action="ViewProduct" asp-route-id="@prod.Id" class="btn btn-outline-primary">View</a>
-                        <a asp-controller="User" asp-action="EditProduct" asp-route-id="@prod.Id" class="btn btn-outline-warning">Edit</a>
+                        <a asp-controller="Product" asp-action="ViewProduct" asp-route-id="@prod.Id" class="btn btn-outline-primary">View</a>
+                        <a asp-controller="Product" asp-action="ManageProduct" asp-route-id="@prod.Id" class="btn btn-outline-warning">ManageProduct</a>
                     </td>
                 </tr>
             }

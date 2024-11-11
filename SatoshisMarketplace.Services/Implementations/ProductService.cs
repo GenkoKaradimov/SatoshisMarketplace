@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SatoshisMarketplace.Entities;
 using SatoshisMarketplace.Services.Interfaces;
+using SatoshisMarketplace.Services.Models.ProductService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,13 +22,9 @@ namespace SatoshisMarketplace.Services.Implementations
         public async Task<Models.ProductService.ProductModel> GetProductAsync(int id)
         {
             // get product and images from database
-            var productTask = _context.Products.FirstOrDefaultAsync(p => p.Id == id);
-            var picturesTask = _context.ProductFiles.Where(pi => pi.Type == ProductFileType.ProductImage && pi.ProductId == id).Select(pi => pi.Id).ToListAsync();
-
-            // await getting info from database
-            await Task.WhenAll(productTask, picturesTask);
-            var product = productTask.Result;
-            var pictures = picturesTask.Result;
+            var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
+            var pictures = await _context.ProductFiles.Where(pi => pi.Type == Entities.ProductFileType.ProductImage && pi.ProductId == id).Select(pi => pi.Id).ToListAsync();
+            var files = await _context.ProductFiles.Where(pf => pf.Type == Entities.ProductFileType.File && pf.ProductId == id).Select(pf => new ProductFIleModel() {Id = pf.Id, Title = pf.Title, TimestampUploaded = pf.TimestampUploaded }).ToListAsync();
 
             if (product == null)
             {
@@ -45,7 +42,8 @@ namespace SatoshisMarketplace.Services.Implementations
                 LastUpdate = product.LastUpdate,
                 OwnerUsername = product.OwnerUsername,
                 Price = product.Price,
-                ProductImages = pictures
+                ProductImages = pictures,
+                ProductFiles = files
             };
         }
 
@@ -64,7 +62,7 @@ namespace SatoshisMarketplace.Services.Implementations
                     OwnerUsername = p.OwnerUsername,
                     Price = p.Price,
                     ProductImages = _context.ProductFiles
-                    .Where(pi => pi.Type == ProductFileType.ProductImage && pi.ProductId == p.Id)
+                    .Where(pi => pi.Type == Entities.ProductFileType.ProductImage && pi.ProductId == p.Id)
                     .Select(pi => pi.Id)
                     .ToList()
                 }).ToListAsync();
@@ -132,7 +130,7 @@ namespace SatoshisMarketplace.Services.Implementations
             await _context.SaveChangesAsync();
         }
 
-        public async Task PublishProductAsync(int id, bool isPublished)
+        public async Task PublishProductAsync(int id, bool bePublished)
         {
             // get product and images from database
             var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
@@ -143,25 +141,70 @@ namespace SatoshisMarketplace.Services.Implementations
             }
 
             // if user want to publish product, product must meet the following conditions
-            var countingImages = _context.ProductFiles.Where(pf => pf.Type == ProductFileType.ProductImage && pf.ProductId == id).CountAsync();
-            var countingFiles = _context.ProductFiles.Where(pf => pf.Type == ProductFileType.File && pf.ProductId == id).CountAsync();
-            await Task.WhenAll(countingImages, countingFiles);
-            if ((await countingImages) == 0) throw new ArgumentException("Product has no images!");
-            if ((await countingFiles) == 0) throw new ArgumentException("Product has no files!");
+            var countingImages = await _context.ProductFiles.Where(pf => pf.Type == Entities.ProductFileType.ProductImage && pf.ProductId == id).CountAsync();
+            var countingFiles = await _context.ProductFiles.Where(pf => pf.Type == Entities.ProductFileType.File && pf.ProductId == id).CountAsync();
+
+            if ((countingImages) == 0) throw new ArgumentException("Product has no images!");
+            if ((countingFiles) == 0) throw new ArgumentException("Product has no files!");
 
             // make it public
-            product.IsListed = isPublished;
+            product.IsListed = bePublished;
             await _context.SaveChangesAsync();
         }
 
-        public async Task<int> AddProductFileAsync()
+        public async Task<int> AddProductFileAsync(Models.ProductService.AddProductFileModel model)
         {
-            return 0;
+            // get product and images from database
+            var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == model.ProductId);
+
+            if (product == null) throw new ArgumentException("Product not found!");
+
+            var file = new Entities.ProductFile()
+            {
+                ProductId = model.ProductId,
+                TimestampUploaded = DateTime.UtcNow,
+                Title = model.Title,
+                Type = Entities.ProductFileType.ProductImage,
+                ContentType = model.ContentType,
+                ImageData = model.ImageData
+            };
+
+            if (!model.IsImage) file.Type = Entities.ProductFileType.File;
+
+            await _context.ProductFiles.AddAsync(file);
+            await _context.SaveChangesAsync();
+
+            return product.Id;
         }
 
-        public async Task RemoveProductFileAsync()
+        public async Task RemoveProductFileAsync(int productFileId)
         {
+            var prod = await _context.ProductFiles.FirstOrDefaultAsync(pf => pf.Id == productFileId);
 
+            if (prod == null)
+            {
+                throw new ArgumentException("Product File not found!");
+            }
+
+            _context.ProductFiles.Remove(prod);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<Models.ProductService.ProductFIleModel> GetProductFile(int id)
+        {
+            var file = await _context.ProductFiles.FirstOrDefaultAsync(pf => pf.Id == id);
+            if (file == null) throw new ArgumentException("File not found!");
+
+            return new Models.ProductService.ProductFIleModel()
+            {
+                Id = id,
+                Title = file.Title,
+                ProductId = file.ProductId,
+                TimestampUploaded= file.TimestampUploaded,
+                FileData = file.ImageData,
+                ContentType = file.ContentType,
+                ProductFileType = (Models.ProductService.ProductFileType)(int)file.Type
+            };
         }
     }
 }

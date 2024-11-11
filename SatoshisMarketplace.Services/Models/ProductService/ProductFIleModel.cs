@@ -21,5 +21,7 @@ namespace SatoshisMarketplace.Services.Models.ProductService
         public string Title { get; set; }
 
         public int ProductId { get; set; }
+
+        public ProductFileType ProductFileType { get; set; }
     }
 }

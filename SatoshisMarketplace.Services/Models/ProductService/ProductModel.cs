@@ -30,5 +30,7 @@ namespace SatoshisMarketplace.Services.Models.ProductService
 
         public List<int> ProductImages { get; set; }
 
+        public List<ProductFIleModel> ProductFiles { get; set; }
+
     }
 }

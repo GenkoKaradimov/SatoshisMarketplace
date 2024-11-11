@@ -14,7 +14,7 @@ namespace SatoshisMarketplace.Entities
         [MaxLength(1073741824)] // 1 GB in bytes
         public byte[] ImageData { get; set; }
 
-        [MaxLength(50)]
+        [MaxLength(200)]
         public string ContentType { get; set; }
 
         public ProductFileType Type { get; set; }
