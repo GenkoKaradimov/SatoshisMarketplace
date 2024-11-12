@@ -22,5 +22,11 @@ namespace SatoshisMarketplace.Entities
         [Required]
         [StringLength(500, ErrorMessage = "Description must not be longer than 500 characters.")]
         public string Description { get; set; }
+
+        #region Navigational Properties
+
+        public ICollection<ProductTag> ProductTags { get; set; } = new List<ProductTag>();
+
+        #endregion
     }
 }

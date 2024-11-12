@@ -21,6 +21,8 @@ namespace SatoshisMarketplace.Entities
 
         public DbSet<ProductFile> ProductFiles { get; set; }
 
+        public DbSet<ProductCategory> ProductCategories { get; set; }
+
         public ServerDbContext(DbContextOptions<ServerDbContext> options)
             : base(options)
         {
@@ -103,6 +105,36 @@ namespace SatoshisMarketplace.Entities
                     .HasPrincipalKey(p => p.Id)
                     .HasForeignKey(p => p.ProductId)
                     .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<ProductCategory>(entity =>
+            {
+                entity.HasKey(pc => new { pc.ProductId, pc.CategoryId });
+
+                entity
+                    .HasOne(pc => pc.Product)
+                    .WithMany(p => p.ProductCategories)
+                    .HasForeignKey(pc => pc.ProductId);
+
+                entity
+                    .HasOne(pc => pc.Category)
+                    .WithMany(c => c.ProductCategories)
+                    .HasForeignKey(pc => pc.CategoryId);
+            });
+
+            modelBuilder.Entity<ProductTag>(entity =>
+            {
+                entity.HasKey(pc => new { pc.ProductId, pc.TagId });
+
+                entity
+                    .HasOne(pt => pt.Product)
+                    .WithMany(p => p.ProductTags)
+                    .HasForeignKey(pc => pc.ProductId);
+
+                entity
+                    .HasOne(pt => pt.Tag)
+                    .WithMany(t => t.ProductTags)
+                    .HasForeignKey(pt => pt.TagId);
             });
         }
     }

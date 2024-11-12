@@ -28,6 +28,8 @@ namespace SatoshisMarketplace.Entities
 
         public Category ParentCategory { get; set; }
 
+        public ICollection<ProductCategory> ProductCategories { get; set; } = new List<ProductCategory>();
+
         #endregion
     }
 }

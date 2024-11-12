@@ -6,8 +6,8 @@
     <script src="~/js/manage_product.js"></script>
 }
 <h2>Manage Product</h2>
-<hr />
 <div id="buttons">
+    <hr />
     <button onclick="AddProductPicture(@Model.Id)" class="btn btn-outline-primary">Add Image</button>
     <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addFileModal">Add File</button>
     @if (Model.IsListed)
@@ -21,8 +21,8 @@
     <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editBasicModal">Edit Info</button>
 
 </div>
-<hr />
 <div id="basicInfo">
+    <hr />
     <div class="card">
         <div class="card-header">
             ID: @Model.Id | Is Published: @Model.IsListed | Created: @Model.FirstPublication.ToString("yyyy.MM.dd HH:mm:ss") | Updated: @Model.LastUpdate.ToString("yyyy.MM.dd HH:mm:ss")
@@ -31,45 +31,59 @@
             <h5 class="card-title">@Model.Name</h5>
             <p class="card-text">Price: @Model.Price (satoshies)</p>
             <p class="card-text">@Model.Description</p>
+            <hr />
+            <h4>Categories</h4>
+            @* @if (Model.Categories.Any())
+            {
+                @foreach(var category in Model.Categories)
+                {
+                    <span class="badge bg-secondary">@Model.Name<button type="button" onclick="removeProductCategory" class="btn-close btn-close-white ms-2"></button></span>
+                }
+            }
+            else
+            {
+                <p>No categorie</p>
+            } *@
+           
         </div>
     </div>
     <br />
 </div>
-
-<hr />
-<h4>Files of product</h4>
-@if (Model.Files.Count() != 0)
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Name</th>
-                <th scope="col">Uploaded</th>
-                <th scope="col"></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var file in Model.Files)
-            {
+<div id="filesOfProduct">
+    <hr />
+    <h4>Files of product</h4>
+    @if (Model.Files.Count() != 0)
+    {
+        <table class="table">
+            <thead>
                 <tr>
-                    <th scope="row">@file.Id</th>
-                    <td>@file.Title</td>
-                    <td>@file.TimestampUploaded.ToString("yyyy.MM.dd HH:mm:ss")</td>
-                    <td></td>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Uploaded</th>
+                    <th scope="col"></th>
                 </tr>
-            }
-        </tbody>
-    </table>
-    
-}
-else
-{
-    <p>No files on this product!</p>
-}
+            </thead>
+            <tbody>
+                @foreach (var file in Model.Files)
+                {
+                    <tr>
+                        <th scope="row">@file.Id</th>
+                        <td>@file.Title</td>
+                        <td>@file.TimestampUploaded.ToString("yyyy.MM.dd HH:mm:ss")</td>
+                        <td></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
 
-<hr />
+    }
+    else
+    {
+        <p>No files on this product!</p>
+    }
+</div>
 <div class="container" id="imageRow">
+    <hr />
     <div class="row">
         @if (Model.Images.Count() != 0)
         {

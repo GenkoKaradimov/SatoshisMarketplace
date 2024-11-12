@@ -3,22 +3,20 @@
 
 ## Features of 1.0.0
 The project's core functionalities are outlined below.
- 1. User registration, login and logout
- 2. User account settings
- 3. User can set profile picture
- 4. Activity logging (e.g., logins, password changes, profile updates)
- 5. (TODO) User can deposit and withdraw satoshis to/from the marketplace balance
- 6. Administrator Options (create, edit, and manage categories and tags)
- 7. User can create new products and mаnage products
- 8. (TODO) Categorization products by category and tags
- 9. (TODO) User can view products by latest releases, specific tags, or categories
- 10. (TODO) User can add products to a personal "Favorites" list
- 11. (TODO) User can purchase product
- 12. (TODO) User can leave reviews on purchased products
- 13. (TODO) User can send messages to other user
- 14. (TODO) User can transfer satoshis to other users
- 15. (TODO) View a complete history of all transactions
- 16. (TODO) Dockerize application
+ 1. User Account (registration, login, logout, password changing and profile picture)
+ 2. Activity logging (e.g., logins, password changes, profile updates)
+ 3. (TODO) User can deposit and withdraw satoshis to/from the marketplace balance
+ 4. Administrator Options (create, edit, and manage categories and tags)
+ 5. User can create new products and mаnage products
+ 6. (TODO) Categorization products by category and tags
+ 7. (TODO) User can view products by latest releases, specific tags, or categories
+ 8. (TODO) User can add products to a personal "Favorites" list
+ 9. (TODO) User can purchase product
+ 10. (TODO) User can leave reviews on purchased products
+ 11. (TODO) User can send messages to other user
+ 12. (TODO) User can transfer satoshis to other users
+ 13. (TODO) View a complete history of all transactions
+ 14. (TODO) Dockerize application
 
 ## Project Structure
 Solution contains 3 projects:

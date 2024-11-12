@@ -38,6 +38,10 @@ namespace SatoshisMarketplace.Entities
 
         public ICollection<ProductFile> ProductFiles { get; set; } = new List<ProductFile>();
 
+        public ICollection<ProductCategory> ProductCategories { get; set; } = new List<ProductCategory>();
+
+        public ICollection<ProductTag> ProductTags { get; set; } = new List<ProductTag>();
+
         #endregion
     }
 }

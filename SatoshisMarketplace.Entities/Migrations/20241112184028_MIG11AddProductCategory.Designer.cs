@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SatoshisMarketplace.Entities;
 
@@ -11,9 +12,10 @@ using SatoshisMarketplace.Entities;
 namespace SatoshisMarketplace.Entities.Migrations
 {
     [DbContext(typeof(ServerDbContext))]
-    partial class ServerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241112184028_MIG11AddProductCategory")]
+    partial class MIG11AddProductCategory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -145,21 +147,6 @@ namespace SatoshisMarketplace.Entities.Migrations
                     b.ToTable("ProductFiles");
                 });
 
-            modelBuilder.Entity("SatoshisMarketplace.Entities.ProductTag", b =>
-                {
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TagId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ProductId", "TagId");
-
-                    b.HasIndex("TagId");
-
-                    b.ToTable("ProductTag");
-                });
-
             modelBuilder.Entity("SatoshisMarketplace.Entities.Tag", b =>
                 {
                     b.Property<int>("Id")
@@ -282,25 +269,6 @@ namespace SatoshisMarketplace.Entities.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("SatoshisMarketplace.Entities.ProductTag", b =>
-                {
-                    b.HasOne("SatoshisMarketplace.Entities.Product", "Product")
-                        .WithMany("ProductTags")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SatoshisMarketplace.Entities.Tag", "Tag")
-                        .WithMany("ProductTags")
-                        .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-
-                    b.Navigation("Tag");
-                });
-
             modelBuilder.Entity("SatoshisMarketplace.Entities.UserLog", b =>
                 {
                     b.HasOne("SatoshisMarketplace.Entities.User", "User")
@@ -324,13 +292,6 @@ namespace SatoshisMarketplace.Entities.Migrations
                     b.Navigation("ProductCategories");
 
                     b.Navigation("ProductFiles");
-
-                    b.Navigation("ProductTags");
-                });
-
-            modelBuilder.Entity("SatoshisMarketplace.Entities.Tag", b =>
-                {
-                    b.Navigation("ProductTags");
                 });
 
             modelBuilder.Entity("SatoshisMarketplace.Entities.User", b =>
