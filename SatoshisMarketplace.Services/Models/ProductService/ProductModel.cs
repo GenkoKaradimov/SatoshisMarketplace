@@ -32,5 +32,7 @@ namespace SatoshisMarketplace.Services.Models.ProductService
 
         public List<ProductFIleModel> ProductFiles { get; set; }
 
+        public List<Models.ProductService.Tag> Tags { get; set; }
+
     }
 }

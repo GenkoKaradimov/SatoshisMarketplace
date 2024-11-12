@@ -24,5 +24,7 @@ namespace SatoshisMarketplace.Web.Models.Product
         public ICollection<int> Images { get; set; } = new List<int>();
 
         public ICollection<ProductFileViewModel> Files { get; set; } = new List<ProductFileViewModel>();
+
+        public ICollection<Models.Product.TagViewModel> Tags { get; set; } = new List<TagViewModel>();
     }
 }

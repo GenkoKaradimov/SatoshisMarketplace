@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using SatoshisMarketplace.Entities;
 using SatoshisMarketplace.Services.Implementations;
 using SatoshisMarketplace.Services.Interfaces;
@@ -45,7 +46,7 @@ namespace SatoshisMarketplace.Web.Controllers
                     Images = prod.ProductImages
                 }).ToList();
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 TempData["ErrorMessage"] = ex.Message;
             }
@@ -90,13 +91,16 @@ namespace SatoshisMarketplace.Web.Controllers
                     OwnerUsername = username
                 });
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 TempData["ErrorMessage"] = ex.Message;
                 return View();
             }
 
             return RedirectToAction("Products", "Product");
         }
+
+        #region Manage Product
 
         [HttpGet]
         public async Task<IActionResult> ManageProduct(int id)
@@ -131,12 +135,17 @@ namespace SatoshisMarketplace.Web.Controllers
                 Description = product.Description,
                 FirstPublication = product.FirstPublication,
                 LastUpdate = product.LastUpdate,
-                Price= product.Price,
+                Price = product.Price,
                 IsListed = product.IsListed,
                 Images = product.ProductImages,
+                Tags = product.Tags.Select(t => new Models.Product.TagViewModel()
+                {
+                    Id = t.Id,
+                    Name = t.DisplayName
+                }).ToList(),
                 Files = product.ProductFiles.Select(pf => new Models.Product.ProductFileViewModel()
                 {
-                    Id=pf.Id,
+                    Id = pf.Id,
                     Title = pf.Title,
                     TimestampUploaded = pf.TimestampUploaded
                 }).ToList()
@@ -159,7 +168,7 @@ namespace SatoshisMarketplace.Web.Controllers
                 if (product.OwnerUsername != username) return BadRequest("You are not owner of this product!");
 
                 await _productService.PublishProductAsync(id, true);
-                
+
             }
             catch (Exception ex)
             {
@@ -302,26 +311,6 @@ namespace SatoshisMarketplace.Web.Controllers
             return Ok("File added successfully");
         }
 
-        public async Task<IActionResult> GetProductImage(int id)
-        {
-            Services.Models.ProductService.ProductFIleModel image;
-
-            try
-            {
-                // take image from database
-                image = await _productService.GetProductFile(id);
-
-                // prevent returning file that is not image
-                if(image.ProductFileType != Services.Models.ProductService.ProductFileType.ProductImage) return NotFound();
-            }
-            catch (Exception ex)
-            {
-                return NotFound();
-            }
-
-            return File(image.FileData, image.ContentType);
-        }
-
         [HttpDelete]
         public async Task<IActionResult> RemoveProductFile(int id)
         {
@@ -343,5 +332,93 @@ namespace SatoshisMarketplace.Web.Controllers
 
             return Ok("ProductFile (image or file) removed successfully!");
         }
+
+        [HttpDelete]
+        public async Task<IActionResult> RemoveProductTag([FromForm] int tagId, [FromForm] int productId)
+        {
+            // is user logged in
+            string? username = HttpContext.Session.GetString("Username");
+            if (username == null) return RedirectToAction("Login", "User");
+
+            try
+            {
+                var product = await _productService.GetProductAsync(productId);
+                if (product.OwnerUsername != username) return BadRequest("You are not owner of this product!");
+
+                await _productService.RemoveProductTag(productId, tagId);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            return Ok("ProductTag removed successfully!");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AddProductTag([FromQuery] int tagId, [FromQuery] int productId)
+        {
+            // is user logged in
+            string? username = HttpContext.Session.GetString("Username");
+            if (username == null) return RedirectToAction("Login", "User");
+
+            try
+            {
+                var product = await _productService.GetProductAsync(productId);
+                if (product.OwnerUsername != username) return BadRequest("You are not owner of this product!");
+
+                await _productService.AddProductTag(productId, tagId);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            return Ok("ProductTag add successfully!");
+        }
+
+        public async Task<IActionResult> GetProductImage(int id)
+        {
+            Services.Models.ProductService.ProductFIleModel image;
+
+            try
+            {
+                // take image from database
+                image = await _productService.GetProductFile(id);
+
+                // prevent returning file that is not image
+                if (image.ProductFileType != Services.Models.ProductService.ProductFileType.ProductImage) return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return NotFound();
+            }
+
+            return File(image.FileData, image.ContentType);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetTags(string val)
+        {
+            if(val == null) return BadRequest("Value (that is searched) is null!");
+            if(val.Count() < 3) return BadRequest("Value (that is searched) is null!");
+
+            List<Services.Models.ProductService.Tag> tags = null;
+
+            try
+            {
+                tags = await _productService.TagsSearch(val);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            string json = JsonConvert.SerializeObject(tags, Formatting.Indented);
+
+            return Ok(json);
+        }
+
+        #endregion
     }
 }

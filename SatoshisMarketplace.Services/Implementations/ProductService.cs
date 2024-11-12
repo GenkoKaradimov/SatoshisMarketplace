@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SatoshisMarketplace.Entities;
 using SatoshisMarketplace.Services.Interfaces;
+using SatoshisMarketplace.Services.Models.AdminService;
 using SatoshisMarketplace.Services.Models.ProductService;
 using System;
 using System.Collections.Generic;
@@ -23,13 +24,15 @@ namespace SatoshisMarketplace.Services.Implementations
         {
             // get product and images from database
             var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
-            var pictures = await _context.ProductFiles.Where(pi => pi.Type == Entities.ProductFileType.ProductImage && pi.ProductId == id).Select(pi => pi.Id).ToListAsync();
-            var files = await _context.ProductFiles.Where(pf => pf.Type == Entities.ProductFileType.File && pf.ProductId == id).Select(pf => new ProductFIleModel() {Id = pf.Id, Title = pf.Title, TimestampUploaded = pf.TimestampUploaded }).ToListAsync();
 
             if (product == null)
             {
                 throw new ArgumentException("Product not found!");
             }
+
+            var pictures = await _context.ProductFiles.Where(pi => pi.Type == Entities.ProductFileType.ProductImage && pi.ProductId == id).Select(pi => pi.Id).ToListAsync();
+            var files = await _context.ProductFiles.Where(pf => pf.Type == Entities.ProductFileType.File && pf.ProductId == id).Select(pf => new ProductFIleModel() { Id = pf.Id, Title = pf.Title, TimestampUploaded = pf.TimestampUploaded }).ToListAsync();
+            var tags = await _context.ProductTag.Where(pt => pt.ProductId == id).Select(pt => new Models.ProductService.Tag { Id = pt.Tag.Id, DisplayName = pt.Tag.DisplayName }).ToListAsync();
 
             // return model
             return new Models.ProductService.ProductModel()
@@ -43,7 +46,8 @@ namespace SatoshisMarketplace.Services.Implementations
                 OwnerUsername = product.OwnerUsername,
                 Price = product.Price,
                 ProductImages = pictures,
-                ProductFiles = files
+                ProductFiles = files,
+                Tags = tags
             };
         }
 
@@ -200,11 +204,41 @@ namespace SatoshisMarketplace.Services.Implementations
                 Id = id,
                 Title = file.Title,
                 ProductId = file.ProductId,
-                TimestampUploaded= file.TimestampUploaded,
+                TimestampUploaded = file.TimestampUploaded,
                 FileData = file.ImageData,
                 ContentType = file.ContentType,
                 ProductFileType = (Models.ProductService.ProductFileType)(int)file.Type
             };
+        }
+
+        public async Task RemoveProductTag(int productId, int tagId)
+        {
+            var productTag = await _context.ProductTag.FirstOrDefaultAsync(x => x.TagId == tagId && x.ProductId == productId);
+
+            if (productTag == null) throw new ArgumentException("Product Tag not found!");
+
+            _context.ProductTag.Remove(productTag);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task AddProductTag(int productId, int tagId)
+        {
+            var productTag = new Entities.ProductTag() { ProductId = productId, TagId = tagId};
+
+            await _context.ProductTag.AddAsync(productTag);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<Models.ProductService.Tag>> TagsSearch(string val)
+        {
+            var tags = await _context.Tags.Where(t => t.DisplayName.ToLower().Contains(val.ToLower())).ToListAsync();
+
+            return tags.Select(t => new Models.ProductService.Tag()
+            {
+                Id = t.Id,
+                DisplayName = t.DisplayName,
+                Description = t.Description
+            }).ToList();
         }
     }
 }

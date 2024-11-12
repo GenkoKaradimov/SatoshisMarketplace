@@ -19,6 +19,7 @@
         <button onclick="confirmMakePublic(@Model.Id)" class="btn btn-outline-danger">Make Public</button>
     }
     <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editBasicModal">Edit Info</button>
+    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addTagModal">Add Tag</button>
 
 </div>
 <div id="basicInfo">
@@ -32,19 +33,18 @@
             <p class="card-text">Price: @Model.Price (satoshies)</p>
             <p class="card-text">@Model.Description</p>
             <hr />
-            <h4>Categories</h4>
-            @* @if (Model.Categories.Any())
+            <h4>Tags</h4>
+            @if (Model.Tags.Any())
             {
-                @foreach(var category in Model.Categories)
+                @foreach(var tag in Model.Tags)
                 {
-                    <span class="badge bg-secondary">@Model.Name<button type="button" onclick="removeProductCategory" class="btn-close btn-close-white ms-2"></button></span>
+                    <span class="badge bg-secondary">@tag.Name<button type="button" onclick="removeProductCategory(@tag.Id, @Model.Id)" class="btn-close btn-close-white ms-2"></button></span>
                 }
             }
             else
             {
-                <p>No categorie</p>
-            } *@
-           
+                <p>No tags added to this product!</p>
+            }
         </div>
     </div>
     <br />
@@ -159,6 +159,31 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary" onclick="updateBasicProductInfo(@Model.Id)">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Modal of add tag *@
+<div class="modal fade" id="addTagModal" tabindex="-1" aria-labelledby="addTagModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addTagModalLabel">Add Tag to this product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Enter 3 symbols of 'Tag' name
+                <form class="d-flex">
+                    <input class="form-control me-2" id="tagSearchField" type="search" placeholder="Search" aria-label="Search">
+                </form>
+                <hr />
+                <div id="displaySearchTable">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

@@ -167,3 +167,135 @@ function updateBasicProductInfo(productId) {
             // alert('An error occurred while updating product information.');
         });
 }
+
+function removeProductCategory(tagId, productId) {
+    const userConfirmed = confirm(
+        "Do you really want to remove tag from this product?"
+    );
+
+    if (userConfirmed) {
+        const formData = new FormData();
+        formData.append('tagId', tagId);
+        formData.append('productId', productId);
+
+        fetch('/Product/RemoveProductTag/', {
+            method: 'DELETE',
+            body: formData
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Tag removed successfully');
+                    location.reload();
+                } else {
+                    console.error('Failed to remove the tag');
+                    location.reload();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+}
+
+function renderTable(data) {
+    // clear table if exist
+    const displayDiv = document.getElementById("displaySearchTable");
+    displayDiv.innerHTML = "";
+
+    // create new table
+    const table = document.createElement("table");
+    table.classList.add("table");
+
+    // title of table
+    const headerRow = document.createElement("tr");
+    const headers = ["Id", "DisplayName", "Action"];
+    headers.forEach(headerText => {
+        const header = document.createElement("th");
+        header.textContent = headerText;
+        headerRow.appendChild(header);
+    });
+    table.appendChild(headerRow);
+
+    // generating rows
+    data.forEach(item => {
+        const row = document.createElement("tr");
+
+        // col for Id
+        const idCell = document.createElement("td");
+        idCell.textContent = item.Id;
+        row.appendChild(idCell);
+
+        // col for DisplayName
+        const nameCell = document.createElement("td");
+        nameCell.textContent = item.DisplayName;
+        row.appendChild(nameCell);
+
+        // col for button
+        const actionCell = document.createElement("td");
+        const button = document.createElement("button");
+        button.textContent = "Add";
+        button.classList.add("btn", "btn-outline-primary");
+        button.onclick = function () {
+            // button is 'add' clicked
+
+            fetch('/Product/AddProductTag?tagId=' + item.Id + "&productId=" + getProductIdFromUrl(), {
+                method: 'GET'
+            })
+                .then(response => {
+                    if (response.ok) {
+                        // console.log('Tag added successfully');
+                        location.reload();
+                    } else {
+                        // console.error('Failed to add the tag');
+                        location.reload();
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        };
+        actionCell.appendChild(button);
+        row.appendChild(actionCell);
+
+        // add row to table
+        table.appendChild(row);
+    });
+
+    // add table to displayDiv
+    displayDiv.appendChild(table);
+}
+
+function getProductIdFromUrl() {
+    // Получаваме текущия URL
+    const url = window.location.href;
+
+    // Използваме регулярни изрази, за да намерим числовото ID след последния слеш
+    const regex = /\/(\d+)$/;
+    const match = url.match(regex);
+
+    if (match && match[1]) {
+        return match[1]; // Връщаме ID-то
+    } else {
+        return null; // Връща null, ако няма ID в URL-то
+    }
+}
+
+
+document.getElementById("tagSearchField").addEventListener("input", function () {
+    const searchValue = this.value;
+
+    if (searchValue.length > 2) {
+        fetch(`/Product/GetTags?val=${encodeURIComponent(searchValue)}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Tags:", data);
+                renderTable(data)
+
+                // Тук можете да добавите логика за обработка на получените тагове
+            })
+            .catch(error => {
+                console.error("There was a problem with the fetch operation:", error);
+            });
+    }
+});

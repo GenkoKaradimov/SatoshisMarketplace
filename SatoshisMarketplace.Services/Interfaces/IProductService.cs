@@ -27,5 +27,11 @@ namespace SatoshisMarketplace.Services.Interfaces
         Task RemoveProductFileAsync(int productFileId);
 
         Task<Models.ProductService.ProductFIleModel> GetProductFile(int id);
+
+        Task RemoveProductTag(int productId, int tagId);
+
+        Task AddProductTag(int productId, int tagId);
+
+        Task<List<Models.ProductService.Tag>> TagsSearch(string val);
     }
 }

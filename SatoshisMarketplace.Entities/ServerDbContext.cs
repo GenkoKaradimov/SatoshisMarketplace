@@ -23,6 +23,8 @@ namespace SatoshisMarketplace.Entities
 
         public DbSet<ProductCategory> ProductCategories { get; set; }
 
+        public DbSet<ProductTag> ProductTag { get; set; }
+
         public ServerDbContext(DbContextOptions<ServerDbContext> options)
             : base(options)
         {
