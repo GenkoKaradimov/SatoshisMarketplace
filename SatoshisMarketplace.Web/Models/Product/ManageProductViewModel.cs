@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SatoshisMarketplace.Web.Models.Product
 {
-    public class ProductViewModel
+    public class ManageProductViewModel
     {
         public int Id { get; set; }
 
@@ -19,6 +19,10 @@ namespace SatoshisMarketplace.Web.Models.Product
 
         public bool IsListed { get; set; }
 
+        public int? CategoryId { get; set; }
+
+        public string CategoryPath { get; set; }
+
         public string OwnerUsername { get; set; }
 
         public ICollection<int> Images { get; set; } = new List<int>();
@@ -26,5 +30,7 @@ namespace SatoshisMarketplace.Web.Models.Product
         public ICollection<ProductFileViewModel> Files { get; set; } = new List<ProductFileViewModel>();
 
         public ICollection<Models.Product.TagViewModel> Tags { get; set; } = new List<TagViewModel>();
+
+        public Dictionary<int, string>? OptionalCategories { get; set; }
     }
 }

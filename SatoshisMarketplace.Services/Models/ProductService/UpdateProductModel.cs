@@ -18,5 +18,7 @@ namespace SatoshisMarketplace.Services.Models.ProductService
 
         public uint Price { get; set; }
 
+        public int CategoryId { get; set; }
+
     }
 }

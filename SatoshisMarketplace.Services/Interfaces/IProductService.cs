@@ -33,5 +33,9 @@ namespace SatoshisMarketplace.Services.Interfaces
         Task AddProductTag(int productId, int tagId);
 
         Task<List<Models.ProductService.Tag>> TagsSearch(string val);
+
+        Task<Dictionary<int, string>> AllCategoriesAsync();
+
+        Task<Dictionary<int, string>> AllCategoriesAsync(string val);
     }
 }

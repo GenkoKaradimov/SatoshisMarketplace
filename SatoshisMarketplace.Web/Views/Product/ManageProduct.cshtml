@@ -1,4 +1,4 @@
-﻿@model SatoshisMarketplace.Web.Models.Product.ProductViewModel
+﻿@model SatoshisMarketplace.Web.Models.Product.ManageProductViewModel
 @{
     ViewData["Title"] = "Manage Products Page";
 }
@@ -31,12 +31,22 @@
         <div class="card-body">
             <h5 class="card-title">@Model.Name</h5>
             <p class="card-text">Price: @Model.Price (satoshies)</p>
-            <p class="card-text">@Model.Description</p>
+            <p class="card-text">Description: @Model.Description</p>
+            <p class="card-text">
+                <b>Category:</b> @if (Model.CategoryId == null)
+                {
+                    <span>No category of this product!</span>
+                }
+                else
+                {
+                    <span>@Model.CategoryPath [Category Id: @Model.CategoryId]</span>
+                }
+            </p>
             <hr />
             <h4>Tags</h4>
             @if (Model.Tags.Any())
             {
-                @foreach(var tag in Model.Tags)
+                @foreach (var tag in Model.Tags)
                 {
                     <span class="badge bg-secondary">@tag.Name<button type="button" onclick="removeProductCategory(@tag.Id, @Model.Id)" class="btn-close btn-close-white ms-2"></button></span>
                 }
@@ -154,6 +164,35 @@
                         <label for="Product Description" class="form-label">ProductDescription</label>
                         <textarea class="form-control" id="ProductDescription" name="ProductDescription" rows="3" maxlength="5000" required>@Model.Description</textarea>
                     </div>
+                    @if (Model.OptionalCategories != null)
+                    {
+                        <div class="mb-3">
+                            <label for="ParentCategoryId" class="form-label">Parent Category</label>
+                            <select class="form-control" id="ParentCategoryId" name="ParentCategoryId">
+                                @if (Model.CategoryId == null)
+                                {
+                                    <option value="-1" selected>(Select Parent Category)</option>
+                                }
+                                else
+                                {
+                                    <option value="-1">(Select Parent Category)</option>
+                                }
+
+                                @foreach (var category in Model.OptionalCategories)
+                                {
+                                    if (Model.CategoryId == category.Key)
+                                    {
+                                        <option value="@category.Key" selected>@category.Value</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@category.Key">@category.Value</option>
+                                    }
+
+                                }
+                            </select>
+                        </div>
+                    }
                 </form>
             </div>
             <div class="modal-footer">
@@ -179,7 +218,6 @@
                 </form>
                 <hr />
                 <div id="displaySearchTable">
-
                 </div>
             </div>
             <div class="modal-footer">

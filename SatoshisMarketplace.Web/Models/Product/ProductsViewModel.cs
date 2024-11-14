@@ -2,10 +2,10 @@
 {
     public class ProductsViewModel
     {
-        public List<ProductViewModel> MyProducts { get; set; } = new List<ProductViewModel>();
+        public List<ManageProductViewModel> MyProducts { get; set; } = new List<ManageProductViewModel>();
 
-        public List<ProductViewModel> MyPurchases { get; set; } = new List<ProductViewModel>();
+        public List<ManageProductViewModel> MyPurchases { get; set; } = new List<ManageProductViewModel>();
 
-        public List<ProductViewModel> MyFavorites { get; set; } = new List<ProductViewModel>();
+        public List<ManageProductViewModel> MyFavorites { get; set; } = new List<ManageProductViewModel>();
     }
 }

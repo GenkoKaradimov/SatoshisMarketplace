@@ -8,7 +8,7 @@ The project's core functionalities are outlined below.
  3. (TODO) User can deposit and withdraw satoshis to/from the marketplace balance
  4. Administrator Options (create, edit, and manage categories and tags)
  5. User can create new products and mаnage products
- 6. (TODO) Categorization products by category and tags
+ 6. Мanage product tags and product category
  7. (TODO) User can view products by latest releases, specific tags, or categories
  8. (TODO) User can add products to a personal "Favorites" list
  9. (TODO) User can purchase product

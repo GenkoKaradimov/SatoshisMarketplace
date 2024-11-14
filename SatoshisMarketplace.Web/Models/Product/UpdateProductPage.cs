@@ -16,5 +16,7 @@ namespace SatoshisMarketplace.Web.Models.Product
 
         [Required(ErrorMessage = "Price is required")]
         public uint Price { get; set; }
+
+        public int SelectedParentCategoryId { get; set; }
     }
 }

@@ -26,6 +26,10 @@ namespace SatoshisMarketplace.Services.Models.ProductService
 
         public bool IsListed { get; set; }
 
+        public int? CategoryId { get; set; }
+
+        public string CategoryPath { get; set; }
+
         public string OwnerUsername { get; set; }
 
         public List<int> ProductImages { get; set; }

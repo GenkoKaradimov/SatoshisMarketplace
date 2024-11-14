@@ -33,6 +33,7 @@ namespace SatoshisMarketplace.Services.Implementations
             var pictures = await _context.ProductFiles.Where(pi => pi.Type == Entities.ProductFileType.ProductImage && pi.ProductId == id).Select(pi => pi.Id).ToListAsync();
             var files = await _context.ProductFiles.Where(pf => pf.Type == Entities.ProductFileType.File && pf.ProductId == id).Select(pf => new ProductFIleModel() { Id = pf.Id, Title = pf.Title, TimestampUploaded = pf.TimestampUploaded }).ToListAsync();
             var tags = await _context.ProductTag.Where(pt => pt.ProductId == id).Select(pt => new Models.ProductService.Tag { Id = pt.Tag.Id, DisplayName = pt.Tag.DisplayName }).ToListAsync();
+            var productCategory = await _context.ProductCategories.FirstOrDefaultAsync(pc => pc.ProductId == product.Id); // at this moment one product have only one category
 
             // return model
             return new Models.ProductService.ProductModel()
@@ -47,7 +48,9 @@ namespace SatoshisMarketplace.Services.Implementations
                 Price = product.Price,
                 ProductImages = pictures,
                 ProductFiles = files,
-                Tags = tags
+                Tags = tags,
+                CategoryId = productCategory?.CategoryId ?? null,
+                CategoryPath = await GetCategoryPath(productCategory?.CategoryId ?? null)
             };
         }
 
@@ -130,6 +133,20 @@ namespace SatoshisMarketplace.Services.Implementations
             product.Price = model.Price;
 
             product.LastUpdate = DateTime.UtcNow;
+
+            if (model.CategoryId != 0 && model.CategoryId != -1)
+            {
+                var cuurentCategory = await _context.ProductCategories.FirstOrDefaultAsync(pc => pc.ProductId == product.Id);
+                if(cuurentCategory != null) _context.ProductCategories.Remove(cuurentCategory);
+
+                var newCategory = new Entities.ProductCategory()
+                {
+                    CategoryId = model.CategoryId,
+                    ProductId = product.Id
+                };
+
+                await _context.ProductCategories.AddAsync(newCategory);
+            }
 
             await _context.SaveChangesAsync();
         }
@@ -223,7 +240,7 @@ namespace SatoshisMarketplace.Services.Implementations
 
         public async Task AddProductTag(int productId, int tagId)
         {
-            var productTag = new Entities.ProductTag() { ProductId = productId, TagId = tagId};
+            var productTag = new Entities.ProductTag() { ProductId = productId, TagId = tagId };
 
             await _context.ProductTag.AddAsync(productTag);
             await _context.SaveChangesAsync();
@@ -240,5 +257,42 @@ namespace SatoshisMarketplace.Services.Implementations
                 Description = t.Description
             }).ToList();
         }
+
+        public async Task<Dictionary<int, string>> AllCategoriesAsync()
+        {
+            var categories = await _context.Categories.Select(c => new { c.Id, c.Name }).ToListAsync();
+
+            return categories.ToDictionary(c => c.Id, c => c.Name);
+        }
+
+        public async Task<Dictionary<int, string>> AllCategoriesAsync(string val)
+        {
+            var categories = await _context.Categories.Select(c => new { c.Id, c.Name }).Where(c => c.Name.ToLower().Contains(val.ToLower())).ToListAsync();
+
+            return categories.ToDictionary(c => c.Id, c => c.Name);
+        }
+
+        private async Task<string> GetCategoryPath(int? categoryId)
+        {
+            if (categoryId == null) return string.Empty;
+
+            var pathSegments = new List<string>();
+
+            while (categoryId != null)
+            {
+                var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == categoryId);
+
+                if (category == null) break;
+
+                pathSegments.Insert(0, category.Name);
+
+                categoryId = category.ParentCategoryId;
+            }
+
+            pathSegments.Insert(0, "root");
+
+            return string.Join("/", pathSegments);
+        }
+
     }
 }

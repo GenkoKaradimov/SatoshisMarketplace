@@ -29,15 +29,15 @@ namespace SatoshisMarketplace.Web.Controllers
 
             var model = new Models.Product.ProductsViewModel()
             {
-                MyProducts = new List<Models.Product.ProductViewModel>(),
-                MyFavorites = new List<Models.Product.ProductViewModel>(),
-                MyPurchases = new List<Models.Product.ProductViewModel>()
+                MyProducts = new List<Models.Product.ManageProductViewModel>(),
+                MyFavorites = new List<Models.Product.ManageProductViewModel>(),
+                MyPurchases = new List<Models.Product.ManageProductViewModel>()
             };
 
             try
             {
                 var myProducts = await _productService.GetProductsByOwnerAsync(username);
-                model.MyProducts = myProducts.Select(prod => new Models.Product.ProductViewModel()
+                model.MyProducts = myProducts.Select(prod => new Models.Product.ManageProductViewModel()
                 {
                     Id = prod.Id,
                     Name = prod.Name,
@@ -109,11 +109,13 @@ namespace SatoshisMarketplace.Web.Controllers
             string? username = HttpContext.Session.GetString("Username");
             if (username == null) return RedirectToAction("Login", "User");
 
-            Services.Models.ProductService.ProductModel product = null;
-            // dali produkta e na tozi kojto go otvarq
+            Services.Models.ProductService.ProductModel product;
+            Dictionary<int, string> оptionalCategories;
+
             try
             {
                 product = await _productService.GetProductAsync(id);
+                оptionalCategories = await _productService.AllCategoriesAsync();
 
                 // Is user owner of this product
                 if (product.OwnerUsername != username)
@@ -128,7 +130,8 @@ namespace SatoshisMarketplace.Web.Controllers
                 return RedirectToAction("Products", "Product");
             }
 
-            return View(new Models.Product.ProductViewModel()
+
+            return View(new Models.Product.ManageProductViewModel()
             {
                 Id = id,
                 Name = product.Name,
@@ -138,6 +141,8 @@ namespace SatoshisMarketplace.Web.Controllers
                 Price = product.Price,
                 IsListed = product.IsListed,
                 Images = product.ProductImages,
+                CategoryId = product.CategoryId,
+                CategoryPath = product.CategoryPath,
                 Tags = product.Tags.Select(t => new Models.Product.TagViewModel()
                 {
                     Id = t.Id,
@@ -148,7 +153,8 @@ namespace SatoshisMarketplace.Web.Controllers
                     Id = pf.Id,
                     Title = pf.Title,
                     TimestampUploaded = pf.TimestampUploaded
-                }).ToList()
+                }).ToList(),
+                OptionalCategories = оptionalCategories
             });
         }
 
@@ -208,7 +214,8 @@ namespace SatoshisMarketplace.Web.Controllers
                     Id = model.Id,
                     Name = model.Name,
                     Description = model.Description,
-                    Price = model.Price
+                    Price = model.Price,
+                    CategoryId = model.SelectedParentCategoryId
                 });
             }
             catch (Exception ex)

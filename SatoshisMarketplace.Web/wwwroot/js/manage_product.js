@@ -136,13 +136,19 @@ function updateBasicProductInfo(productId) {
     const productName = document.getElementById('ProductName').value;
     const productPrice = document.getElementById('ProductPrice').value;
     const productDescription = document.getElementById('ProductDescription').value;
+    var selectedCategoryId = -1;
+    if (document.getElementById("ParentCategoryId").value) {
+        // alert(document.getElementById("ParentCategoryId").value);
+        selectedCategoryId = document.getElementById("ParentCategoryId").value;
+    }
 
     // Create a data object to send in the request
     const data = {
         Id: productId,
         name: productName,
         price: parseFloat(productPrice),
-        description: productDescription
+        description: productDescription,
+        SelectedParentCategoryId: selectedCategoryId
     };
 
     // Send the PUT request
