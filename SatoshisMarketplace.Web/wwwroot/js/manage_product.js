@@ -305,3 +305,29 @@ document.getElementById("tagSearchField").addEventListener("input", function () 
             });
     }
 });
+
+function removeFile(fileId) {
+    const userConfirmed = confirm(
+        "Do you really want to this file from this product?"
+    );
+
+    if (userConfirmed) {
+        const formData = new FormData();
+        formData.append('fileId', fileId);
+
+        fetch('/Product/RemoveProductFile/', {
+            method: 'DELETE',
+            body: formData
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log('File removed successfully');
+                    location.reload();
+                } else {
+                    console.error('Failed to remove the file');
+                    // location.reload();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+}

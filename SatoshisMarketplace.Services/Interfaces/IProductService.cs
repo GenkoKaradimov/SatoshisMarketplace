@@ -37,5 +37,8 @@ namespace SatoshisMarketplace.Services.Interfaces
         Task<Dictionary<int, string>> AllCategoriesAsync();
 
         Task<Dictionary<int, string>> AllCategoriesAsync(string val);
-    }
+
+        Task<Models.ProductService.ProductFIleModel> DownloadFile(int fileId, string username);
+
+	}
 }

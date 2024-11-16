@@ -100,6 +100,125 @@ namespace SatoshisMarketplace.Web.Controllers
             return RedirectToAction("Products", "Product");
         }
 
+        [HttpGet]
+        public async Task<IActionResult> View(int id)
+        {
+            Services.Models.ProductService.ProductModel product;
+
+            try
+            {
+                product = await _productService.GetProductAsync(id);
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Catalog", "Product");
+            }
+
+            if (!product.IsListed) return RedirectToAction("Catalog", "Product");
+
+            var model = new Models.Product.ViewProductViewModel()
+            {
+                Id = id,
+                Name = product.Name,
+                Description = product.Description,
+                Price = product.Price,
+                CategoryId = product.CategoryId,
+                CategoryPath = product.CategoryPath,
+                FirstPublication = product.FirstPublication,
+                LastUpdate = product.LastUpdate,
+                IsAddedFavoritis = false,
+                IsBoughtByUser = false,
+                IsListed = false,
+                IsOwner = false,
+                OwnerUsername = product.OwnerUsername,
+                Images = product.ProductImages,
+                Tags = product.Tags.Select(t => new Models.Product.TagViewModel()
+                {
+                    Id = t.Id,
+                    Name = t.DisplayName
+                }).ToList(),
+                Files = product.ProductFiles.Select(pf => new Models.Product.ProductFileViewModel()
+                {
+                    Id = pf.Id,
+                    Title = pf.Title,
+                    TimestampUploaded = pf.TimestampUploaded
+                }).ToList()
+            };
+
+            // is user owner of this product
+            string? username = HttpContext.Session.GetString("Username");
+            if (username == product.OwnerUsername) model.IsOwner = true;
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Download(int id)
+        {
+            // is user logged in
+            string? username = HttpContext.Session.GetString("Username");
+            if (username == null) return BadRequest("You must log in!");
+
+            Services.Models.ProductService.ProductFIleModel image;
+
+            try
+            {
+                image = await _productService.DownloadFile(id, username);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            var fileExtension = GetFileExtensionFromContentType(image.ContentType);
+            var fileName = image.Title ?? "downloaded_file";
+
+            if (!fileName.EndsWith(fileExtension))
+            {
+                fileName += fileExtension;
+            }
+
+            return File(image.FileData, image.ContentType, fileName);
+        }
+
+        private string GetFileExtensionFromContentType(string contentType)
+        {
+            var mimeTypes = new Dictionary<string, string>
+            {
+                { "image/jpeg", ".jpg" },
+                { "image/png", ".png" },
+                { "image/gif", ".gif" },
+                { "application/pdf", ".pdf" },
+                { "text/plain", ".txt" },
+                { "application/vnd.openxmlformats-officedocument.wordprocessingml.document", ".docx" },
+                { "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", ".xlsx" }
+                // TODO: add more MIME types
+            };
+
+            return mimeTypes.TryGetValue(contentType, out var extension) ? extension : "";
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetProductImage(int id)
+        {
+            Services.Models.ProductService.ProductFIleModel image;
+
+            try
+            {
+                // take image from database
+                image = await _productService.GetProductFile(id);
+
+                // prevent returning file that is not image
+                if (image.ProductFileType != Services.Models.ProductService.ProductFileType.ProductImage) return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return NotFound();
+            }
+
+            return File(image.FileData, image.ContentType);
+        }
+
         #region Manage Product
 
         [HttpGet]
@@ -319,18 +438,18 @@ namespace SatoshisMarketplace.Web.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> RemoveProductFile(int id)
+        public async Task<IActionResult> RemoveProductFile([FromForm] int fileId)
         {
             string? username = HttpContext.Session.GetString("Username");
             if (username == null) return RedirectToAction("Login", "User");
 
             try
             {
-                var prodFile = await _productService.GetProductFile(id);
+                var prodFile = await _productService.GetProductFile(fileId);
                 var product = await _productService.GetProductAsync(prodFile.ProductId);
                 if (product.OwnerUsername != username) return BadRequest("You are not owner of this product!");
 
-                await _productService.RemoveProductFileAsync(id);
+                await _productService.RemoveProductFileAsync(fileId);
             }
             catch (Exception ex)
             {
@@ -384,31 +503,11 @@ namespace SatoshisMarketplace.Web.Controllers
             return Ok("ProductTag add successfully!");
         }
 
-        public async Task<IActionResult> GetProductImage(int id)
-        {
-            Services.Models.ProductService.ProductFIleModel image;
-
-            try
-            {
-                // take image from database
-                image = await _productService.GetProductFile(id);
-
-                // prevent returning file that is not image
-                if (image.ProductFileType != Services.Models.ProductService.ProductFileType.ProductImage) return NotFound();
-            }
-            catch (Exception ex)
-            {
-                return NotFound();
-            }
-
-            return File(image.FileData, image.ContentType);
-        }
-
         [HttpGet]
         public async Task<IActionResult> GetTags(string val)
         {
-            if(val == null) return BadRequest("Value (that is searched) is null!");
-            if(val.Count() < 3) return BadRequest("Value (that is searched) is null!");
+            if (val == null) return BadRequest("Value (that is searched) is null!");
+            if (val.Count() < 3) return BadRequest("Value (that is searched) is null!");
 
             List<Services.Models.ProductService.Tag> tags = null;
 

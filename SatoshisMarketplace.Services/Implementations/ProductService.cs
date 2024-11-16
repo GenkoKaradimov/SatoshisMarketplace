@@ -294,5 +294,29 @@ namespace SatoshisMarketplace.Services.Implementations
             return string.Join("/", pathSegments);
         }
 
-    }
+		public async Task<Models.ProductService.ProductFIleModel> DownloadFile(int fileId, string username)
+		{
+			var file = await _context.ProductFiles.Include(pf => pf.Product).FirstOrDefaultAsync(pf => pf.Id == fileId);
+			if (file == null) throw new ArgumentException("File not found!");
+
+            if(file.Product.OwnerUsername != username)
+            {
+				// this user is not owner ot this product
+				// check is user bought this product
+				throw new ArgumentException("You must bought this product");
+			}
+
+			return new Models.ProductService.ProductFIleModel()
+			{
+				Id = file.Id,
+				Title = file.Title,
+				ProductId = file.ProductId,
+				TimestampUploaded = file.TimestampUploaded,
+				FileData = file.ImageData,
+				ContentType = file.ContentType,
+				ProductFileType = (Models.ProductService.ProductFileType)(int)file.Type
+			};
+		}
+
+	}
 }

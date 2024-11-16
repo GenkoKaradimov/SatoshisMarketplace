@@ -80,7 +80,10 @@
                         <th scope="row">@file.Id</th>
                         <td>@file.Title</td>
                         <td>@file.TimestampUploaded.ToString("yyyy.MM.dd HH:mm:ss")</td>
-                        <td></td>
+                        <td>
+                            <a asp-controller="Product" asp-action="Download" asp-route-id="@file.Id" class="btn btn-outline-primary">Download</a>
+                            <a onclick="removeFile(@file.Id)" class="btn btn-outline-danger">Remove</a>
+                        </td>
                     </tr>
                 }
             </tbody>

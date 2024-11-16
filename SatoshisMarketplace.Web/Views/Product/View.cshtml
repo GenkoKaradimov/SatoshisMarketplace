@@ -1,0 +1,127 @@
+﻿@model SatoshisMarketplace.Web.Models.Product.ViewProductViewModel
+@{
+    ViewData["Title"] = "";
+}
+@section scripts {
+    <script src="~/js/view_product.js"></script>
+}
+@section head {
+	<link rel="stylesheet" href="~/css/view_product.css" />
+}
+<div class="container my-5">
+	@* Product Title *@
+	<h2 class="text-center mb-4">@Model.Name</h2>
+	<hr />
+
+	<div class="row">
+		@* Main Product Image *@
+		<div class="col-md-6">
+			<div class="card">
+				<img src="/Product/GetProductImage/@Model.Images.First()" class="card-img-top" alt="Main Product Image">
+			</div>
+		</div>
+
+		@* Product Details and Actions *@
+		<div class="col-md-6">
+			<h3 class="mb-3">Product Description</h3>
+			<p class="text-muted">
+				@Model.Description
+			</p>
+			<h4 class="text-primary mb-3">@Model.Price.ToString() Satoshies</h4>
+
+			@* Action Buttons *@
+			<div class="d-grid gap-2">
+				@if (Model.IsOwner == Model.IsBoughtByUser)
+				{
+					<button class="btn btn-success btn-lg mb-2">Buy Now</button>
+				}
+				@if (Model.IsOwner)
+				{
+					<a asp-controller="Product" asp-action="ManageProduct" asp-route-id="@Model.Id" class="btn btn-outline-primary btn-lg mb-2">Manage Product</a>
+				}
+				@if (Model.IsAddedFavoritis)
+				{
+					<button class="btn btn-outline-danger btn-lg">Remove from Favorites</button>
+				}
+				else
+				{
+					<button class="btn btn-outline-danger btn-lg">Add to Favorites</button>
+				}
+			</div>
+			@if (!(Model.IsOwner == Model.IsBoughtByUser))
+			{
+				@* Files list *@
+				<br />
+				<div class="card">
+					<div class="card-header">Files</div>
+					<div class="card-body">
+						@foreach (var fl in Model.Files)
+						{
+							<p class="card-text"><a asp-controller="Product" asp-action="Download" asp-route-id="@fl.Id" class="btn btn-outline-primary">Download</a> @fl.Title</p>
+						}
+					</div>
+				</div>
+			}
+		</div>
+	</div>
+
+	@if (Model.Images.Count > 1)
+	{
+		@* Aditional Images *@
+		<div class="row mt-4">
+			<hr />
+			<h5>More Images</h5>
+			@foreach(var image in Model.Images)
+			{
+				<div class="col-3">
+					<div class="image-container">
+						<img src="/Product/GetProductImage/@image" class="img-fluid rounded" alt="Additional Image 2">
+					</div>
+				</div>
+			}
+		</div>
+	}
+
+	
+
+	@* <div class="mt-5">
+		<hr />
+		<h3>Customer Reviews</h3>
+		<p>All reviews are written exclusively by verified product buyers.</p>
+		<!-- Reviews List -->
+		<div class="list-group mb-4">
+			<div class="list-group-item">
+				<h5>John Doe <small class="text-muted"> - 5 stars</small></h5>
+				<p>Amazing product! Highly recommend it to everyone.</p>
+			</div>
+			<div class="list-group-item">
+				<h5>Jane Smith <small class="text-muted"> - 4 stars</small></h5>
+				<p>Good quality, but a bit pricey.</p>
+			</div>
+			<!-- Additional reviews can go here -->
+		</div>
+
+		<!-- Write a Review Form -->
+		<h4>Write a Review</h4>
+		<form>
+			<div class="mb-3">
+				<label for="reviewRating" class="form-label">Rating</label>
+				<select class="form-select" id="reviewRating">
+					<option value="5">5 - Excellent</option>
+					<option value="4">4 - Good</option>
+					<option value="3">3 - Average</option>
+					<option value="2">2 - Poor</option>
+					<option value="1">1 - Terrible</option>
+				</select>
+			</div>
+			<div class="mb-3">
+				<label for="reviewText" class="form-label">Your Review</label>
+				<textarea class="form-control" id="reviewText" rows="4" placeholder="Write your review here"></textarea>
+			</div>
+			<button type="submit" class="btn btn-primary">Submit Review</button>
+		</form>
+	</div> *@
+</div>
+<style>
+	
+</style>
