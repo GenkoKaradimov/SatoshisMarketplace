@@ -25,6 +25,8 @@ namespace SatoshisMarketplace.Entities
 
         public DbSet<ProductTag> ProductTag { get; set; }
 
+        public DbSet<FavoriteProduct> FavoriteProducts { get; set; }
+
         public ServerDbContext(DbContextOptions<ServerDbContext> options)
             : base(options)
         {
@@ -137,6 +139,25 @@ namespace SatoshisMarketplace.Entities
                     .HasOne(pt => pt.Tag)
                     .WithMany(t => t.ProductTags)
                     .HasForeignKey(pt => pt.TagId);
+            });
+
+
+
+            modelBuilder.Entity<FavoriteProduct>(entity =>
+            {
+                entity.HasKey(fp => new { fp.ProductId, fp.Username });
+
+                entity
+                    .HasOne(fp => fp.Product)
+                    .WithMany(p => p.FavoriteProducts)
+                    .HasForeignKey(fp => fp.ProductId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity
+                    .HasOne(fp => fp.User)
+                    .WithMany(p => p.FavoriteProducts)
+                    .HasForeignKey(fp => fp.Username)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
         }
     }

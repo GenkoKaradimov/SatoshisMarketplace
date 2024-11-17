@@ -40,5 +40,17 @@ namespace SatoshisMarketplace.Services.Interfaces
 
         Task<Models.ProductService.ProductFIleModel> DownloadFile(int fileId, string username);
 
-	}
+        #region Favourite Products
+
+        Task AddFavoriteProduct(int productId, string username);
+
+        Task RemoveFavoriteProduct(int productId, string username);
+
+        Task<List<Models.ProductService.ProductModel>> GetFavoriteProductsByUserAsync(string username);
+
+        Task<bool> IsFavoriteProduct(int productId, string? username);
+
+        #endregion
+
+    }
 }

@@ -25,6 +25,8 @@ namespace SatoshisMarketplace.Web.Models.Product
 
         public bool IsAddedFavoritis { get; set; }
 
+        public bool IsUserLoggedIn { get; set; }
+
 		public int? CategoryId { get; set; }
 
         public string CategoryPath { get; set; }

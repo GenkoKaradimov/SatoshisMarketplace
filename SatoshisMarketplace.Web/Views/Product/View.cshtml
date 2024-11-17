@@ -31,21 +31,27 @@
 
 			@* Action Buttons *@
 			<div class="d-grid gap-2">
+				@* Buy Button *@
 				@if (Model.IsOwner == Model.IsBoughtByUser)
 				{
 					<button class="btn btn-success btn-lg mb-2">Buy Now</button>
 				}
+				@* Redirect to Manage Button *@
 				@if (Model.IsOwner)
 				{
 					<a asp-controller="Product" asp-action="ManageProduct" asp-route-id="@Model.Id" class="btn btn-outline-primary btn-lg mb-2">Manage Product</a>
 				}
-				@if (Model.IsAddedFavoritis)
+				@* Favorite Buttons *@
+				@if (Model.IsUserLoggedIn)
 				{
-					<button class="btn btn-outline-danger btn-lg">Remove from Favorites</button>
-				}
-				else
-				{
-					<button class="btn btn-outline-danger btn-lg">Add to Favorites</button>
+					@if (Model.IsAddedFavoritis)
+					{
+						<button class="btn btn-outline-danger btn-lg" onclick="removeFromFavoritesList(@Model.Id)">Remove from Favorites</button>
+					}
+					else
+					{
+						<button class="btn btn-outline-danger btn-lg" onclick="addToFavoritesList(@Model.Id)">Add to Favorites</button>
+					}
 				}
 			</div>
 			@if (!(Model.IsOwner == Model.IsBoughtByUser))

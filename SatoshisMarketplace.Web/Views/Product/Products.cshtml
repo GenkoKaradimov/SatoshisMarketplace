@@ -64,7 +64,7 @@ else
                     <td>@prod.Name</td>
                     <td>@prod.FirstPublication.ToString("yyyy.MM.dd HH:mm:ss")</td>
                     <td>
-                        <a asp-controller="User" asp-action="ViewProduct" asp-route-id="@prod.Id" class="btn btn-outline-primary">View</a>
+                        <a asp-controller="Product" asp-action="View" asp-route-id="@prod.Id" class="btn btn-outline-primary">View</a>
                     </td>
                 </tr>
             }
@@ -97,7 +97,7 @@ else
                     <td>@prod.Name</td>
                     <td>@prod.FirstPublication.ToString("yyyy.MM.dd HH:mm:ss")</td>
                     <td>
-                        <a asp-controller="User" asp-action="ViewProduct" asp-route-id="@prod.Id" class="btn btn-outline-primary">View</a>
+                        <a asp-controller="Product" asp-action="View" asp-route-id="@prod.Id" class="btn btn-outline-primary">View</a>
                     </td>
                 </tr>
             }

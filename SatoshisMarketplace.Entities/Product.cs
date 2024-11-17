@@ -42,6 +42,8 @@ namespace SatoshisMarketplace.Entities
 
         public ICollection<ProductTag> ProductTags { get; set; } = new List<ProductTag>();
 
+        public ICollection<FavoriteProduct> FavoriteProducts { get; set; } = new List<FavoriteProduct>();
+
         #endregion
     }
 }

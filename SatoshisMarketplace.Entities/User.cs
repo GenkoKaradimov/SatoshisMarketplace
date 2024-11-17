@@ -30,6 +30,8 @@ namespace SatoshisMarketplace.Entities
 
         public ICollection<Product> Products { get; set; } = new HashSet<Product>();
 
+        public ICollection<FavoriteProduct> FavoriteProducts { get; set; } = new HashSet<FavoriteProduct>();
+
         #endregion
     }
 }

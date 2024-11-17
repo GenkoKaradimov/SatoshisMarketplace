@@ -21,40 +21,6 @@ namespace SatoshisMarketplace.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Products()
-        {
-            // is user logged in
-            string? username = HttpContext.Session.GetString("Username");
-            if (username == null) return RedirectToAction("Login", "User");
-
-            var model = new Models.Product.ProductsViewModel()
-            {
-                MyProducts = new List<Models.Product.ManageProductViewModel>(),
-                MyFavorites = new List<Models.Product.ManageProductViewModel>(),
-                MyPurchases = new List<Models.Product.ManageProductViewModel>()
-            };
-
-            try
-            {
-                var myProducts = await _productService.GetProductsByOwnerAsync(username);
-                model.MyProducts = myProducts.Select(prod => new Models.Product.ManageProductViewModel()
-                {
-                    Id = prod.Id,
-                    Name = prod.Name,
-                    FirstPublication = prod.FirstPublication,
-                    IsListed = prod.IsListed,
-                    Images = prod.ProductImages
-                }).ToList();
-            }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = ex.Message;
-            }
-
-            return View(model);
-        }
-
-        [HttpGet]
         public async Task<IActionResult> CreateProduct()
         {
             // is user logged in
@@ -103,11 +69,15 @@ namespace SatoshisMarketplace.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> View(int id)
         {
+            string? username = HttpContext.Session.GetString("Username");
+
             Services.Models.ProductService.ProductModel product;
+            bool isFavoriteProduct;
 
             try
             {
                 product = await _productService.GetProductAsync(id);
+                isFavoriteProduct = await _productService.IsFavoriteProduct(id, username);
             }
             catch (Exception ex)
             {
@@ -126,10 +96,11 @@ namespace SatoshisMarketplace.Web.Controllers
                 CategoryPath = product.CategoryPath,
                 FirstPublication = product.FirstPublication,
                 LastUpdate = product.LastUpdate,
-                IsAddedFavoritis = false,
+                IsAddedFavoritis = isFavoriteProduct,
                 IsBoughtByUser = false,
                 IsListed = false,
                 IsOwner = false,
+                IsUserLoggedIn = (username != null),
                 OwnerUsername = product.OwnerUsername,
                 Images = product.ProductImages,
                 Tags = product.Tags.Select(t => new Models.Product.TagViewModel()
@@ -146,7 +117,6 @@ namespace SatoshisMarketplace.Web.Controllers
             };
 
             // is user owner of this product
-            string? username = HttpContext.Session.GetString("Username");
             if (username == product.OwnerUsername) model.IsOwner = true;
 
             return View(model);
@@ -219,7 +189,93 @@ namespace SatoshisMarketplace.Web.Controllers
             return File(image.FileData, image.ContentType);
         }
 
-        #region Manage Product
+        #region My Product Management (favorite and bought products)
+
+        [HttpGet]
+        public async Task<IActionResult> Products()
+        {
+            // is user logged in
+            string? username = HttpContext.Session.GetString("Username");
+            if (username == null) return RedirectToAction("Login", "User");
+
+            var model = new Models.Product.ProductsViewModel()
+            {
+                MyProducts = new List<Models.Product.ManageProductViewModel>(),
+                MyFavorites = new List<Models.Product.ManageProductViewModel>(),
+                MyPurchases = new List<Models.Product.ManageProductViewModel>()
+            };
+
+            try
+            {
+                var myProducts = await _productService.GetProductsByOwnerAsync(username);
+                model.MyProducts = myProducts.Select(prod => new Models.Product.ManageProductViewModel()
+                {
+                    Id = prod.Id,
+                    Name = prod.Name,
+                    FirstPublication = prod.FirstPublication,
+                    IsListed = prod.IsListed,
+                    Images = prod.ProductImages
+                }).ToList();
+
+                var myFavoriteProducts = await _productService.GetFavoriteProductsByUserAsync(username);
+                model.MyFavorites = myFavoriteProducts.Select(prod => new Models.Product.ManageProductViewModel()
+                {
+                    Id = prod.Id,
+                    Name = prod.Name,
+                    FirstPublication = prod.FirstPublication,
+                    IsListed = prod.IsListed,
+                    Images = prod.ProductImages
+                }).ToList();
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+
+            return View(model);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> AddFavoriteProducts(int productId)
+        {
+            // is user logged in
+            string? username = HttpContext.Session.GetString("Username");
+            if (username == null) return BadRequest("User not logged in!");
+
+            try
+            {
+                await _productService.AddFavoriteProduct(productId, username);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            return Ok($"Product (Product Id: {productId}) added to favorites list of user {username} successfully!");
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> RemoveFavoriteProducts(int productId)
+        {
+            // is user logged in
+            string? username = HttpContext.Session.GetString("Username");
+            if (username == null) return BadRequest("User not logged in!");
+
+            try
+            {
+                await _productService.RemoveFavoriteProduct(productId, username);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            return Ok($"Product (Product Id: {productId}) removed from favorites list of user {username} successfully!");
+        }
+
+        #endregion
+
+        #region Manage Product (where user is owner)
 
         [HttpGet]
         public async Task<IActionResult> ManageProduct(int id)
